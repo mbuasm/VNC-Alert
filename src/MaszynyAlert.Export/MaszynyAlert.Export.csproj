@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>MaszynyAlert.Export</RootNamespace>
+    <AssemblyName>MaszynyAlert.Export</AssemblyName>
+    <Description>Eksport raportu postojów do PDF (PDFsharp-MigraDoc) i Excela (ClosedXML). Bez WPF — generuje do strumienia.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MaszynyAlert.Core\MaszynyAlert.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PDFsharp-MigraDoc" Version="6.2.4" />
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="MaszynyAlert.Export.Tests" />
+  </ItemGroup>
+
+</Project>

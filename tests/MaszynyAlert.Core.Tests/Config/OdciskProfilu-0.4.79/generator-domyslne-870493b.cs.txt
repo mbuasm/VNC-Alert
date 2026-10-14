@@ -1,0 +1,17 @@
+using System.Text.Json;
+using MaszynyAlert.Core.Config;
+
+namespace MaszynyAlert.Core.Tests;
+
+public sealed class U02DefaultsGen
+{
+    [Fact]
+    public void Generate()
+    {
+        string input = Environment.GetEnvironmentVariable("U02_IN")!;
+        string output = Environment.GetEnvironmentVariable("U02_OUT")!;
+        var profile = JsonSerializer.Deserialize<GroupProfile>(File.ReadAllBytes(input), GroupFileCodec.Options)!;
+        string full = JsonSerializer.Serialize(profile, GroupFileCodec.Options);
+        File.WriteAllText(output, "domyslne-wartosci " + GroupFileCodec.ProfileHash(profile) + "\n" + full + "\n");
+    }
+}

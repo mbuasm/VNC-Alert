@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+    <ProjectReference Include="../../src/MaszynyAlert.Windows/MaszynyAlert.Windows.csproj" />
+    <Using Include="Xunit" />
+    <!-- UseWPF zdejmuje System.IO z niejawnych using (konflikt nazw Path) — pozostałe testy go potrzebują. -->
+    <Using Include="System.IO" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\MaszynyAlert.Rfb.Tests\Fakes\ManualTimeProvider.cs" Link="Fakes\ManualTimeProvider.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\samples\ocr-580-postep\*.png" Link="samples\ocr-580-postep\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\samples\production-amm580\*.png" Link="samples\production-amm580\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\samples\cameo1-2026-10-11\*.png" Link="samples\cameo1-2026-10-11\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\samples\production-aidite5x\pasek-ocr-2026-09-25\*" Link="samples\production-aidite5x\pasek-ocr-2026-09-25\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\config\config.example.json" Link="config\config.example.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\config\rules.example.json" Link="config\rules.example.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

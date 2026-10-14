@@ -1,0 +1,647 @@
+{
+  "czas": "2026-10-11 19:10:57",
+  "jezyk": "en-US",
+  "silnik": "Windows OCR",
+  "czasMs": 40,
+  "klatka": "20261011-191057-0000-start.png",
+  "tekst": "2026-10-12 Mach Track Actual F: Actual S: Tool No.: Part Counter: IDLE: Normal Stop {T8} Tool life was reached. Please change the tool. -318.890 -102.180 e e 4 1063 Spindle: Coolant: Tool Unclamp: MagDoor: HW Gear: Machine 9. eee 4.536 e. 465 BreakPoint OFF OFF OFF OFF OFF Job Auto 2026-10-05 12-40-31 .NC Progress: e e e Line Selection Axis x z Close System Operator Manual 100% 120% 100% 150% To Fixed Resume",
+  "linie": [
+    "2026-10-12",
+    "Mach Track",
+    "Actual F:",
+    "Actual S:",
+    "Tool No.:",
+    "Part Counter:",
+    "IDLE: Normal Stop",
+    "{T8} Tool life was reached. Please change the tool.",
+    "-318.890",
+    "-102.180",
+    "e",
+    "e",
+    "4",
+    "1063",
+    "Spindle:",
+    "Coolant:",
+    "Tool Unclamp:",
+    "MagDoor:",
+    "HW Gear:",
+    "Machine",
+    "9. eee",
+    "4.536",
+    "e. 465",
+    "BreakPoint",
+    "OFF",
+    "OFF",
+    "OFF",
+    "OFF",
+    "OFF",
+    "Job",
+    "Auto",
+    "2026-10-05 12-40-31 .NC",
+    "Progress:",
+    "e",
+    "e",
+    "e",
+    "Line",
+    "Selection",
+    "Axis",
+    "x",
+    "z",
+    "Close",
+    "System",
+    "Operator",
+    "Manual",
+    "100%",
+    "120%",
+    "100%",
+    "150%",
+    "To Fixed",
+    "Resume"
+  ],
+  "slowa": [
+    {
+      "tekst": "2026-10-12",
+      "x": 601,
+      "y": 3,
+      "w": 66,
+      "h": 9,
+      "linia": 0
+    },
+    {
+      "tekst": "Mach",
+      "x": 9,
+      "y": 40,
+      "w": 38,
+      "h": 12,
+      "linia": 1
+    },
+    {
+      "tekst": "Track",
+      "x": 70,
+      "y": 40,
+      "w": 39,
+      "h": 12,
+      "linia": 1
+    },
+    {
+      "tekst": "Actual",
+      "x": 43,
+      "y": 92,
+      "w": 47,
+      "h": 13,
+      "linia": 2
+    },
+    {
+      "tekst": "F:",
+      "x": 97,
+      "y": 93,
+      "w": 11,
+      "h": 12,
+      "linia": 2
+    },
+    {
+      "tekst": "Actual",
+      "x": 43,
+      "y": 135,
+      "w": 47,
+      "h": 13,
+      "linia": 3
+    },
+    {
+      "tekst": "S:",
+      "x": 97,
+      "y": 136,
+      "w": 11,
+      "h": 12,
+      "linia": 3
+    },
+    {
+      "tekst": "Tool",
+      "x": 40,
+      "y": 178,
+      "w": 32,
+      "h": 13,
+      "linia": 4
+    },
+    {
+      "tekst": "No.:",
+      "x": 79,
+      "y": 179,
+      "w": 29,
+      "h": 12,
+      "linia": 4
+    },
+    {
+      "tekst": "Part",
+      "x": 12,
+      "y": 222,
+      "w": 30,
+      "h": 12,
+      "linia": 5
+    },
+    {
+      "tekst": "Counter:",
+      "x": 48,
+      "y": 222,
+      "w": 64,
+      "h": 12,
+      "linia": 5
+    },
+    {
+      "tekst": "IDLE:",
+      "x": 16,
+      "y": 11,
+      "w": 33,
+      "h": 11,
+      "linia": 6
+    },
+    {
+      "tekst": "Normal",
+      "x": 55,
+      "y": 10,
+      "w": 52,
+      "h": 12,
+      "linia": 6
+    },
+    {
+      "tekst": "Stop",
+      "x": 113,
+      "y": 11,
+      "w": 34,
+      "h": 15,
+      "linia": 6
+    },
+    {
+      "tekst": "{T8}",
+      "x": 167,
+      "y": 11,
+      "w": 28,
+      "h": 14,
+      "linia": 7
+    },
+    {
+      "tekst": "Tool",
+      "x": 199,
+      "y": 10,
+      "w": 32,
+      "h": 12,
+      "linia": 7
+    },
+    {
+      "tekst": "life",
+      "x": 237,
+      "y": 10,
+      "w": 21,
+      "h": 12,
+      "linia": 7
+    },
+    {
+      "tekst": "was",
+      "x": 262,
+      "y": 14,
+      "w": 27,
+      "h": 8,
+      "linia": 7
+    },
+    {
+      "tekst": "reached.",
+      "x": 294,
+      "y": 10,
+      "w": 61,
+      "h": 12,
+      "linia": 7
+    },
+    {
+      "tekst": "Please",
+      "x": 361,
+      "y": 10,
+      "w": 45,
+      "h": 12,
+      "linia": 7
+    },
+    {
+      "tekst": "change",
+      "x": 410,
+      "y": 10,
+      "w": 53,
+      "h": 16,
+      "linia": 7
+    },
+    {
+      "tekst": "the",
+      "x": 467,
+      "y": 10,
+      "w": 24,
+      "h": 12,
+      "linia": 7
+    },
+    {
+      "tekst": "tool.",
+      "x": 495,
+      "y": 10,
+      "w": 33,
+      "h": 12,
+      "linia": 7
+    },
+    {
+      "tekst": "-318.890",
+      "x": 233,
+      "y": 368,
+      "w": 92,
+      "h": 14,
+      "linia": 8
+    },
+    {
+      "tekst": "-102.180",
+      "x": 233,
+      "y": 403,
+      "w": 92,
+      "h": 14,
+      "linia": 9
+    },
+    {
+      "tekst": "e",
+      "x": 124,
+      "y": 92,
+      "w": 10,
+      "h": 14,
+      "linia": 10
+    },
+    {
+      "tekst": "e",
+      "x": 124,
+      "y": 135,
+      "w": 10,
+      "h": 14,
+      "linia": 11
+    },
+    {
+      "tekst": "4",
+      "x": 123,
+      "y": 179,
+      "w": 12,
+      "h": 14,
+      "linia": 12
+    },
+    {
+      "tekst": "1063",
+      "x": 124,
+      "y": 222,
+      "w": 46,
+      "h": 14,
+      "linia": 13
+    },
+    {
+      "tekst": "Spindle:",
+      "x": 255,
+      "y": 92,
+      "w": 58,
+      "h": 17,
+      "linia": 14
+    },
+    {
+      "tekst": "Coolant:",
+      "x": 251,
+      "y": 135,
+      "w": 62,
+      "h": 13,
+      "linia": 15
+    },
+    {
+      "tekst": "Tool",
+      "x": 204,
+      "y": 178,
+      "w": 32,
+      "h": 13,
+      "linia": 16
+    },
+    {
+      "tekst": "Unclamp:",
+      "x": 243,
+      "y": 178,
+      "w": 70,
+      "h": 17,
+      "linia": 16
+    },
+    {
+      "tekst": "MagDoor:",
+      "x": 238,
+      "y": 222,
+      "w": 75,
+      "h": 16,
+      "linia": 17
+    },
+    {
+      "tekst": "HW",
+      "x": 242,
+      "y": 265,
+      "w": 27,
+      "h": 12,
+      "linia": 18
+    },
+    {
+      "tekst": "Gear:",
+      "x": 275,
+      "y": 265,
+      "w": 38,
+      "h": 12,
+      "linia": 18
+    },
+    {
+      "tekst": "Machine",
+      "x": 261,
+      "y": 328,
+      "w": 65,
+      "h": 13,
+      "linia": 19
+    },
+    {
+      "tekst": "9.",
+      "x": 267,
+      "y": 438,
+      "w": 19,
+      "h": 14,
+      "linia": 20
+    },
+    {
+      "tekst": "eee",
+      "x": 291,
+      "y": 438,
+      "w": 34,
+      "h": 14,
+      "linia": 20
+    },
+    {
+      "tekst": "4.536",
+      "x": 266,
+      "y": 473,
+      "w": 59,
+      "h": 14,
+      "linia": 21
+    },
+    {
+      "tekst": "e.",
+      "x": 267,
+      "y": 508,
+      "w": 19,
+      "h": 14,
+      "linia": 22
+    },
+    {
+      "tekst": "465",
+      "x": 290,
+      "y": 508,
+      "w": 35,
+      "h": 14,
+      "linia": 22
+    },
+    {
+      "tekst": "BreakPoint",
+      "x": 212,
+      "y": 554,
+      "w": 77,
+      "h": 12,
+      "linia": 23
+    },
+    {
+      "tekst": "OFF",
+      "x": 357,
+      "y": 96,
+      "w": 22,
+      "h": 9,
+      "linia": 24
+    },
+    {
+      "tekst": "OFF",
+      "x": 357,
+      "y": 139,
+      "w": 22,
+      "h": 9,
+      "linia": 25
+    },
+    {
+      "tekst": "OFF",
+      "x": 357,
+      "y": 182,
+      "w": 22,
+      "h": 9,
+      "linia": 26
+    },
+    {
+      "tekst": "OFF",
+      "x": 357,
+      "y": 225,
+      "w": 22,
+      "h": 9,
+      "linia": 27
+    },
+    {
+      "tekst": "OFF",
+      "x": 357,
+      "y": 268,
+      "w": 22,
+      "h": 9,
+      "linia": 28
+    },
+    {
+      "tekst": "Job",
+      "x": 426,
+      "y": 133,
+      "w": 26,
+      "h": 13,
+      "linia": 29
+    },
+    {
+      "tekst": "Auto",
+      "x": 487,
+      "y": 81,
+      "w": 37,
+      "h": 12,
+      "linia": 30
+    },
+    {
+      "tekst": "2026-10-05",
+      "x": 460,
+      "y": 134,
+      "w": 84,
+      "h": 12,
+      "linia": 31
+    },
+    {
+      "tekst": "12-40-31",
+      "x": 553,
+      "y": 134,
+      "w": 64,
+      "h": 12,
+      "linia": 31
+    },
+    {
+      "tekst": ".NC",
+      "x": 621,
+      "y": 134,
+      "w": 26,
+      "h": 12,
+      "linia": 31
+    },
+    {
+      "tekst": "Progress:",
+      "x": 428,
+      "y": 253,
+      "w": 67,
+      "h": 16,
+      "linia": 32
+    },
+    {
+      "tekst": "e",
+      "x": 76,
+      "y": 367,
+      "w": 16,
+      "h": 16,
+      "linia": 33
+    },
+    {
+      "tekst": "e",
+      "x": 76,
+      "y": 437,
+      "w": 16,
+      "h": 16,
+      "linia": 34
+    },
+    {
+      "tekst": "e",
+      "x": 76,
+      "y": 507,
+      "w": 16,
+      "h": 16,
+      "linia": 35
+    },
+    {
+      "tekst": "Line",
+      "x": 36,
+      "y": 554,
+      "w": 29,
+      "h": 12,
+      "linia": 36
+    },
+    {
+      "tekst": "Selection",
+      "x": 17,
+      "y": 574,
+      "w": 66,
+      "h": 12,
+      "linia": 37
+    },
+    {
+      "tekst": "Axis",
+      "x": 101,
+      "y": 328,
+      "w": 30,
+      "h": 13,
+      "linia": 38
+    },
+    {
+      "tekst": "x",
+      "x": 110,
+      "y": 368,
+      "w": 12,
+      "h": 14,
+      "linia": 39
+    },
+    {
+      "tekst": "z",
+      "x": 111,
+      "y": 438,
+      "w": 10,
+      "h": 14,
+      "linia": 40
+    },
+    {
+      "tekst": "Close",
+      "x": 130,
+      "y": 554,
+      "w": 40,
+      "h": 12,
+      "linia": 41
+    },
+    {
+      "tekst": "System",
+      "x": 125,
+      "y": 575,
+      "w": 51,
+      "h": 15,
+      "linia": 42
+    },
+    {
+      "tekst": "Operator",
+      "x": 688,
+      "y": 11,
+      "w": 67,
+      "h": 15,
+      "linia": 43
+    },
+    {
+      "tekst": "Manual",
+      "x": 668,
+      "y": 80,
+      "w": 56,
+      "h": 13,
+      "linia": 44
+    },
+    {
+      "tekst": "100%",
+      "x": 742,
+      "y": 324,
+      "w": 47,
+      "h": 15,
+      "linia": 45
+    },
+    {
+      "tekst": "120%",
+      "x": 701,
+      "y": 384,
+      "w": 35,
+      "h": 11,
+      "linia": 46
+    },
+    {
+      "tekst": "100%",
+      "x": 742,
+      "y": 449,
+      "w": 47,
+      "h": 15,
+      "linia": 47
+    },
+    {
+      "tekst": "150%",
+      "x": 701,
+      "y": 509,
+      "w": 35,
+      "h": 11,
+      "linia": 48
+    },
+    {
+      "tekst": "To",
+      "x": 319,
+      "y": 565,
+      "w": 19,
+      "h": 11,
+      "linia": 49
+    },
+    {
+      "tekst": "Fixed",
+      "x": 343,
+      "y": 564,
+      "w": 37,
+      "h": 12,
+      "linia": 49
+    },
+    {
+      "tekst": "Resume",
+      "x": 222,
+      "y": 575,
+      "w": 57,
+      "h": 11,
+      "linia": 50
+    }
+  ]
+}

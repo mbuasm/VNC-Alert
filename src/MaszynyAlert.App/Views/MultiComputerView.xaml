@@ -1,0 +1,1016 @@
+<UserControl x:Class="MaszynyAlert.App.Views.MultiComputerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <!-- One row of the pre-UAC firewall readiness block; same look as the network diagnostics rows. -->
+        <DataTemplate x:Key="ReadinessRowTemplate">
+                                <Border Margin="0,0,0,8" Padding="12" CornerRadius="10" BorderThickness="1">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource DividerBrush}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsOk}" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource OkSoftBackgroundBrush}" />
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource OkSoftBorderBrush}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsWaiting}" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource WarningSoftBackgroundBrush}" />
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource WarningSoftBorderBrush}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsProblem}" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource ErrorSoftBackgroundBrush}" />
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource ErrorSoftBorderBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="260" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Label}" FontWeight="SemiBold" TextWrapping="Wrap"
+                                                   VerticalAlignment="Top" Margin="0,0,12,0" />
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="{Binding Result}" FontSize="15" FontWeight="SemiBold"
+                                                       TextWrapping="Wrap" />
+                                            <TextBlock Text="{Binding Detail}" Margin="0,4,0,0" Foreground="{DynamicResource TextSecondaryBrush}"
+                                                       TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+        </DataTemplate>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="18">
+            <TextBlock Text="Praca na kilku komputerach" FontSize="25" FontWeight="SemiBold" />
+            <TextBlock Margin="0,6,0,18" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                       Text="Wspólne alerty i potwierdzenia. Gdy komputer obserwujący zostanie wyłączony, inny przygotowany komputer może przejąć obserwację." />
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="ZAPISANE USTAWIENIE" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold" />
+                        <TextBlock x:Name="SavedSettingText" Text="{Binding SavedSettingText}" FontSize="22" FontWeight="SemiBold" Margin="0,8,0,0" />
+                        <TextBlock x:Name="SavedGroupText" Text="{Binding SavedGroupText}" FontWeight="SemiBold" Margin="0,8,0,0" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding SavedSettingDetail}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,6,0,0" TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="2" Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="FAKTYCZNIE DZIAŁA TERAZ" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold" />
+                        <TextBlock x:Name="RuntimeStateText" Text="{Binding RuntimeStateText}" FontSize="22" FontWeight="SemiBold" Margin="0,8,0,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsRuntimeWarning}" Value="True">
+                                            <Setter Property="Foreground" Value="{DynamicResource WarningTextBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock x:Name="VisibleComputersText" Text="{Binding VisibleComputersText}" FontWeight="SemiBold" Margin="0,8,0,0" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding RuntimeStateDetail}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,6,0,0" TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Border Margin="0,14,0,0" Padding="14" Background="{DynamicResource WarningSoftBackgroundBrush}" BorderBrush="{DynamicResource WarningSoftBorderBrush}" BorderThickness="1" CornerRadius="10">
+                <TextBlock TextWrapping="Wrap">
+                    <Run FontWeight="SemiBold" Text="Ważne: " />
+                    <Run Text="zapisane ustawienie i działający transport to dwa osobne stany. Panel nie uznaje samego zapisu za działającą współpracę." />
+                </TextBlock>
+            </Border>
+
+            <!-- Wskaźnik uzupełniania wspólnego raportu postojów. Sam raport
+                 jest WYŁĄCZNIE w zakładce „Raport postojów” — tutaj stoi tylko informacja, czyje
+                 obserwacje już doszły. -->
+            <Border x:Name="ReportSourcesPanel" Margin="0,14,0,0" Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="Uzupełnianie raportu postojów" FontSize="17" FontWeight="SemiBold" />
+                    <TextBlock Margin="0,6,0,10" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                               Text="Komputery grupy wymieniają się zapisami postojów, więc raport w zakładce „Raport postojów” pokazuje wszędzie te same epizody. Komputer, który jeszcze nie odpowiedział, nie znaczy błędu — po prostu jego obserwacji jeszcze tu nie ma." />
+                    <DataGrid x:Name="ReportSourcesGrid" ItemsSource="{Binding ReportSourceRows}" AutoGenerateColumns="False"
+                              IsReadOnly="True" HeadersVisibility="Column" CanUserAddRows="False" CanUserDeleteRows="False"
+                              GridLinesVisibility="Horizontal" RowBackground="{DynamicResource CardBackgroundBrush}" AlternatingRowBackground="{DynamicResource SurfaceAltBrush}"
+                              MaxHeight="180">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Komputer" Binding="{Binding Host}" Width="*" />
+                            <DataGridTextColumn Header="Rola" Binding="{Binding RoleText}" Width="120" />
+                            <DataGridTextColumn Header="Raport uzupełniony" Binding="{Binding ReportSyncedText}" Width="260" />
+                            <DataGridTextColumn Header="Współpraca" Binding="{Binding CooperationText}" Width="2*" MinWidth="160">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextWrapping" Value="Wrap" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="Jak chcesz rozpocząć?" FontSize="20" FontWeight="SemiBold" Margin="0,24,0,12" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Button x:Name="CreateGroupButton" Grid.Column="0" Command="{Binding SelectCreateGroupCommand}"
+                        HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Padding="18">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                            <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsCreateGroupSelected}" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource OkSoftBackgroundBrush}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                    <Setter Property="BorderThickness" Value="2" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <StackPanel>
+                        <TextBlock Text="Utwórz grupę" FontSize="18" FontWeight="SemiBold" />
+                        <TextBlock Margin="0,6,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                                   Text="Ten komputer rozpocznie nową grupę na podstawie obecnej listy maszyn i profili." />
+                    </StackPanel>
+                </Button>
+
+                <Button x:Name="JoinGroupButton" Grid.Column="2" Command="{Binding SelectJoinGroupCommand}"
+                        HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Padding="18">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                            <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsJoinGroupSelected}" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource OkSoftBackgroundBrush}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                    <Setter Property="BorderThickness" Value="2" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <StackPanel>
+                        <TextBlock Text="Dołącz do grupy" FontSize="18" FontWeight="SemiBold" />
+                        <TextBlock Margin="0,6,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                                   Text="Ten komputer użyje pliku grupy przygotowanego wcześniej na innym stanowisku." />
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <Border Margin="0,16,0,0" Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock x:Name="ChoiceTitleText" Text="{Binding ChoiceTitle}" FontSize="17" FontWeight="SemiBold" />
+                    <TextBlock x:Name="ChoiceDetailText" Text="{Binding ChoiceDetail}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,6,0,0" TextWrapping="Wrap"
+                               Visibility="{Binding ChoiceDetail, Converter={StaticResource NullToVisibility}}" />
+                </StackPanel>
+            </Border>
+
+            <Border x:Name="CreateDraftPanel" Margin="0,16,0,0" Style="{StaticResource CardStyle}"
+                    Visibility="{Binding IsCreateDraftStep, Converter={StaticResource BoolToVisibility}}">
+                <StackPanel>
+                    <TextBlock Text="Utwórz grupę — szkic lokalny" FontSize="20" FontWeight="SemiBold" />
+                    <TextBlock Margin="0,5,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                               Text="Ten krok przygotowuje tylko nazwę i podsumowanie. Nie tworzy grupy i nie zmienia pracy aplikacji." />
+
+                    <TextBlock Text="Nazwa grupy" Margin="0,18,0,6" FontWeight="SemiBold" />
+                    <TextBox x:Name="DraftGroupNameTextBox" Text="{Binding DraftGroupName, UpdateSourceTrigger=PropertyChanged}"
+                             MaxLength="101" Padding="11,8" FontSize="16" />
+                    <TextBlock x:Name="DraftGroupNameStatusText" Text="{Binding DraftGroupNameStatus}"
+                               Margin="0,5,0,0" TextWrapping="Wrap">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsDraftGroupNameValid}" Value="False">
+                                        <Setter Property="Foreground" Value="{DynamicResource WarningTextBrush}" />
+                                        <Setter Property="FontWeight" Value="SemiBold" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <Grid Margin="0,20,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="16" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Padding="16" CornerRadius="12" Background="{DynamicResource SurfaceAltBrush}"
+                                BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock Text="MASZYNY I PROFILE" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold" />
+                                <TextBlock x:Name="CreateMachineSummaryText" Text="{Binding CreateMachineSummaryText}"
+                                           Margin="0,8,0,0" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                <TextBlock x:Name="CreateProfilesText" Text="{Binding CreateProfilesText}"
+                                           Margin="0,4,0,10" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" />
+                                <ItemsControl x:Name="CreateMachinesList" ItemsSource="{Binding CreateMachines}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Margin="0,0,8,8" Padding="10,7" CornerRadius="8"
+                                                    Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                                                    <TextBlock Margin="4,0,0,0" Text="{Binding Profile, StringFormat=— profil: {0}}" Foreground="{DynamicResource TextSecondaryBrush}" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="2" Padding="16" CornerRadius="12" Background="{DynamicResource SurfaceAltBrush}"
+                                BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock Text="GOTOWOŚĆ TEGO KOMPUTERA" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold" />
+                                <TextBlock x:Name="LocalReadinessText" Text="{Binding LocalReadinessText}"
+                                           FontSize="17" FontWeight="SemiBold" Margin="0,8,0,0" TextWrapping="Wrap">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsLocalReadinessWarning}" Value="True">
+                                                    <Setter Property="Foreground" Value="{DynamicResource WarningTextBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBlock x:Name="PasswordsReadinessText" Text="{Binding PasswordsReadinessText}"
+                                           Margin="0,10,0,0" TextWrapping="Wrap" />
+                                <TextBlock x:Name="OcrReadinessText" Text="{Binding OcrReadinessText}"
+                                           Margin="0,5,0,0" TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding LocalReadinessDetail}" Foreground="{DynamicResource TextSecondaryBrush}"
+                                           Margin="0,8,0,0" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <Border Margin="0,16,0,0" Padding="12" CornerRadius="9" Background="{DynamicResource WarningSoftBackgroundBrush}"
+                            BorderBrush="{DynamicResource WarningSoftBorderBrush}" BorderThickness="1">
+                        <TextBlock TextWrapping="Wrap" FontWeight="SemiBold" Foreground="{DynamicResource WarningTextBrush}"
+                                   Text="Nadal bez zapisu, UAC, zapory, eksportu profilu i przełączania runtime. Te operacje pojawią się dopiero w kolejnych krokach." />
+                    </Border>
+
+                    <DockPanel Margin="0,16,0,0" LastChildFill="False">
+                        <TextBlock DockPanel.Dock="Left" MaxWidth="720" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                                   Text="Dalej przygotuje wyłącznie zamrożone podsumowanie w pamięci. Nazwę i zawartość sprawdzisz przed przyszłym utworzeniem grupy." />
+                        <Button x:Name="ContinueCreateButton" DockPanel.Dock="Right" Margin="16,0,0,0"
+                                MinWidth="120" Padding="18,10" Content="Dalej"
+                                Command="{Binding ContinueCreateCommand}" />
+                    </DockPanel>
+                </StackPanel>
+            </Border>
+
+            <Border x:Name="CreateConfirmationPanel" Margin="0,16,0,0" Style="{StaticResource CardStyle}"
+                    Visibility="{Binding IsCreateConfirmationStep, Converter={StaticResource BoolToVisibility}}">
+                <StackPanel>
+                    <TextBlock Text="Potwierdź utworzenie grupy" FontSize="20" FontWeight="SemiBold" />
+                    <TextBlock Margin="0,5,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                               Text="To zamrożone podsumowanie bieżącego profilu. Powrót zachowa wpisaną nazwę, a ponowne przejście zbuduje świeżą propozycję." />
+
+                    <Grid Margin="0,18,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="16" />
+                            <ColumnDefinition Width="3*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Padding="16" CornerRadius="12" Background="{DynamicResource OkSoftBackgroundBrush}"
+                                BorderBrush="{DynamicResource OkSoftBorderBrush}" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock Text="NAZWA GRUPY" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold" />
+                                <TextBlock x:Name="ConfirmationGroupNameText"
+                                           Text="{Binding CurrentCreateProposal.GroupName}"
+                                           Margin="0,8,0,0" FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                <TextBlock Margin="0,12,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap">
+                                    <Run Text="Aktywne maszyny: " />
+                                    <Run x:Name="ConfirmationActiveMachineCountText"
+                                         Text="{Binding CurrentCreateProposal.ActiveMachineCount, Mode=OneWay}" FontWeight="SemiBold" />
+                                    <Run Text=" z " />
+                                    <Run Text="{Binding CurrentCreateProposal.TotalMachineCount, Mode=OneWay}" FontWeight="SemiBold" />
+                                </TextBlock>
+                                <TextBlock Margin="0,5,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                                           Text="{Binding CurrentCreateProposal.ProfilesText, StringFormat=Profile aktywnych maszyn: {0}}" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="2" Padding="16" CornerRadius="12" Background="{DynamicResource SurfaceAltBrush}"
+                                BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock Text="MASZYNY W PROPOZYCJI" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold" />
+                                <ItemsControl x:Name="ConfirmationMachinesList" Margin="0,10,0,0"
+                                              ItemsSource="{Binding CurrentCreateProposal.Machines}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Margin="0,0,8,8" Padding="10,7" CornerRadius="8"
+                                                    Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                                                    <TextBlock Margin="4,0,0,0" Text="{Binding Profile, StringFormat=— profil: {0}}" Foreground="{DynamicResource TextSecondaryBrush}" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <TextBlock Text="{Binding CurrentCreateProposal.OcrReadinessText}"
+                                           Margin="0,4,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <Border Margin="0,16,0,0" Padding="12" CornerRadius="9" Background="{DynamicResource WarningSoftBackgroundBrush}"
+                            BorderBrush="{DynamicResource WarningSoftBorderBrush}" BorderThickness="1">
+                        <TextBlock TextWrapping="Wrap" FontWeight="SemiBold" Foreground="{DynamicResource WarningTextBrush}"
+                                   Text="Dopiero przycisk Utwórz i włącz wygeneruje klucz grupy, poprosi o UAC i wykona transakcyjne przełączenie ustawień, zapory oraz runtime. Eksport pliku grupy jest osobnym krokiem, dostępnym dopiero po utworzeniu grupy." />
+                    </Border>
+
+
+                    <Border x:Name="CreateFirewallReadinessPanel" Margin="0,16,0,0" Padding="14" CornerRadius="10"
+                            Background="{DynamicResource SurfaceAltBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1"
+                            Visibility="{Binding IsFirewallReadinessVisible, Converter={StaticResource BoolToVisibility}}">
+                        <StackPanel>
+                            <TextBlock Text="Gotowość komputera do reguły zapory" FontSize="17" FontWeight="SemiBold" />
+                            <TextBlock Margin="0,5,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Text="{Binding FirewallReadinessHint}" />
+                            <StackPanel Margin="0,12,0,0"
+                                        Visibility="{Binding IsLanInterfaceChoiceVisible, Converter={StaticResource BoolToVisibility}}">
+                                <TextBlock Text="INTERFEJS DO MASZYN" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold" />
+                                <ComboBox x:Name="CreateLanInterfaceCombo" Margin="0,6,0,0" MinWidth="320" HorizontalAlignment="Left"
+                                          ItemsSource="{Binding LanInterfaceChoices}" DisplayMemberPath="Display"
+                                          SelectedItem="{Binding SelectedLanInterface, Mode=TwoWay}" />
+                                <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Text="{Binding LanInterfaceChoiceHint}" />
+                            </StackPanel>
+                            <Border Margin="0,12,0,0" Padding="12" CornerRadius="9" BorderThickness="1"
+                                    Visibility="{Binding IsFirewallReadinessSummaryVisible, Converter={StaticResource BoolToVisibility}}">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{DynamicResource OkSoftBackgroundBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource OkSoftBorderBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsFirewallReadinessProblem}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource ErrorSoftBackgroundBrush}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource ErrorSoftBorderBrush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsFirewallReadinessRunning}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource WarningSoftBackgroundBrush}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource WarningSoftBorderBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <StackPanel>
+                                    <TextBlock x:Name="CreateFirewallReadinessSummaryText" Text="{Binding FirewallReadinessSummaryText}"
+                                               FontWeight="SemiBold" TextWrapping="Wrap" />
+                                    <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                                               Text="{Binding FirewallReadinessSummaryDetail}" />
+                                </StackPanel>
+                            </Border>
+                            <ItemsControl x:Name="CreateFirewallReadinessList" Margin="0,12,0,0"
+                                          ItemsSource="{Binding FirewallReadinessRows}"
+                                          ItemTemplate="{StaticResource ReadinessRowTemplate}" />
+                            <Border Margin="0,4,0,0" Padding="12" CornerRadius="9" BorderThickness="1"
+                                    Visibility="{Binding IsNetworkProfileStatusVisible, Converter={StaticResource BoolToVisibility}}">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{DynamicResource OkSoftBackgroundBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource OkSoftBorderBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsNetworkProfileError}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource ErrorSoftBackgroundBrush}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource ErrorSoftBorderBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock x:Name="CreateNetworkProfileStatusText" TextWrapping="Wrap" Text="{Binding NetworkProfileStatusText}" />
+                            </Border>
+                            <Border Margin="0,8,0,0" Padding="12" CornerRadius="9" BorderThickness="1"
+                                    Visibility="{Binding IsItInstructionStatusVisible, Converter={StaticResource BoolToVisibility}}">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{DynamicResource OkSoftBackgroundBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource OkSoftBorderBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsItInstructionError}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource ErrorSoftBackgroundBrush}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource ErrorSoftBorderBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock x:Name="CreateItInstructionStatusText" TextWrapping="Wrap" Text="{Binding ItInstructionStatusText}" />
+                            </Border>
+                            <WrapPanel Margin="0,12,0,0">
+                                <Button x:Name="CreateCheckFirewallReadinessButton" Margin="0,0,12,8" MinWidth="170" Padding="18,10"
+                                        Content="Sprawdź ponownie" Command="{Binding CheckFirewallReadinessCommand}" />
+                                <Button x:Name="CreateSetPrivateNetworkProfileButton" Margin="0,0,12,8" MinWidth="220" Padding="18,10"
+                                        Content="Ustaw profil Prywatny (UAC)" Command="{Binding SetPrivateNetworkProfileCommand}"
+                                        Visibility="{Binding CanSetPrivateNetworkProfile, Converter={StaticResource BoolToVisibility}}" />
+                                <Button x:Name="CreateExportItInstructionButton" Margin="0,0,12,8" MinWidth="220" Padding="18,10"
+                                        Content="Eksportuj instrukcję dla IT…" Command="{Binding ExportItInstructionCommand}"
+                                        Visibility="{Binding CanExportItInstruction, Converter={StaticResource BoolToVisibility}}" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="CreateApplyStatusPanel" Margin="0,16,0,0" Padding="14" CornerRadius="10"
+                            BorderThickness="1" Visibility="{Binding IsCreateApplyStatusVisible, Converter={StaticResource BoolToVisibility}}">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="{DynamicResource OkSoftBackgroundBrush}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource OkSoftBorderBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsCreateApplyError}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource ErrorSoftBackgroundBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource ErrorSoftBorderBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <StackPanel>
+                            <TextBlock x:Name="CreateApplyStatusText" Text="{Binding CreateApplyStatusText}"
+                                       FontSize="17" FontWeight="SemiBold" TextWrapping="Wrap" />
+                            <TextBlock x:Name="CreateApplyDetailText" Text="{Binding CreateApplyDetail}"
+                                       Margin="0,5,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="GroupFileExportPanel" Margin="0,16,0,0" Padding="14" CornerRadius="10"
+                            Background="{DynamicResource SurfaceAltBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1"
+                            Visibility="{Binding IsGroupFileExportVisible, Converter={StaticResource BoolToVisibility}}">
+                        <StackPanel>
+                            <TextBlock Text="Plik grupy dla drugiego komputera" FontSize="17" FontWeight="SemiBold" />
+                            <TextBlock x:Name="GroupFileExportHintText" Margin="0,5,0,0" Foreground="{DynamicResource TextSecondaryBrush}"
+                                       TextWrapping="Wrap" Text="{Binding GroupFileExportHint}" />
+                            <Border Margin="0,12,0,0" Padding="12" CornerRadius="9" Background="{DynamicResource WarningSoftBackgroundBrush}"
+                                    BorderBrush="{DynamicResource WarningSoftBorderBrush}" BorderThickness="1">
+                                <TextBlock x:Name="GroupFileExportWarningText" TextWrapping="Wrap"
+                                           FontWeight="SemiBold" Foreground="{DynamicResource WarningTextBrush}"
+                                           Text="{Binding GroupFileExportWarningText}" />
+                            </Border>
+                            <Border x:Name="GroupFileExportStatusPanel" Margin="0,12,0,0" Padding="12" CornerRadius="9"
+                                    BorderThickness="1"
+                                    Visibility="{Binding IsGroupFileExportStatusVisible, Converter={StaticResource BoolToVisibility}}">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{DynamicResource OkSoftBackgroundBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource OkSoftBorderBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsGroupFileExportError}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource ErrorSoftBackgroundBrush}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource ErrorSoftBorderBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock x:Name="GroupFileExportStatusText" TextWrapping="Wrap"
+                                           Text="{Binding GroupFileExportStatusText}" />
+                            </Border>
+                            <Button x:Name="ExportGroupFileButton" Margin="0,12,0,0" HorizontalAlignment="Left"
+                                    MinWidth="220" Padding="18,10" Content="Zapisz plik grupy…"
+                                    Command="{Binding ExportGroupFileCommand}" />
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock x:Name="CreateNetworkCheckHintText" Margin="0,16,0,0" Foreground="{DynamicResource TextSecondaryBrush}"
+                               TextWrapping="Wrap" Text="{Binding CreateNetworkCheckHint}"
+                               Visibility="{Binding IsCreateNetworkCheckHintVisible, Converter={StaticResource BoolToVisibility}}" />
+                    <DockPanel Margin="0,16,0,0" LastChildFill="False">
+                        <Button x:Name="BackToCreateDraftButton" DockPanel.Dock="Left"
+                                MinWidth="120" Padding="18,10" Content="Wstecz"
+                                Command="{Binding BackToCreateDraftCommand}" />
+                        <Button x:Name="ApplyCreateButton" DockPanel.Dock="Right" Margin="16,0,0,0"
+                                MinWidth="170" Padding="18,10" Content="Utwórz i włącz"
+                                Command="{Binding ApplyCreateCommand}" />
+                        <Button x:Name="CheckCreatedGroupNetworkButton" DockPanel.Dock="Right" Margin="16,0,0,0"
+                                MinWidth="200" Padding="18,10" Content="Sprawdź sieć grupy"
+                                Command="{Binding CheckCreatedGroupNetworkCommand}" />
+                    </DockPanel>
+                </StackPanel>
+            </Border>
+
+            <Border x:Name="JoinFilePanel" Margin="0,16,0,0" Style="{StaticResource CardStyle}"
+                    Visibility="{Binding IsJoinFileStep, Converter={StaticResource BoolToVisibility}}">
+                <StackPanel>
+                    <TextBlock Text="Dołącz do grupy — wybierz plik" FontSize="20" FontWeight="SemiBold" />
+                    <TextBlock Margin="0,5,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                               Text="Wybierz jeden plik .vncgroup otrzymany z komputera, który utworzył grupę. Aplikacja odczyta najwyżej 1 MiB i pokaże podsumowanie przed jakąkolwiek zmianą." />
+                    <Border Margin="0,14,0,0" Padding="12" CornerRadius="9" Background="{DynamicResource WarningSoftBackgroundBrush}"
+                            BorderBrush="{DynamicResource WarningSoftBorderBrush}" BorderThickness="1">
+                        <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource WarningTextBrush}">
+                            <Run FontWeight="SemiBold" Text="Plik grupy jest sekretem. " />
+                            <Run Text="Nie wysyłaj go w diagnostyce. Sam wybór, anulowanie albo błąd odczytu nie zapisują konfiguracji i nie uruchamiają UAC ani zapory." />
+                        </TextBlock>
+                    </Border>
+                    <Border x:Name="JoinImportStatusPanel" Margin="0,14,0,0" Padding="12" CornerRadius="9"
+                            BorderThickness="1" Visibility="{Binding IsJoinImportStatusVisible, Converter={StaticResource BoolToVisibility}}">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource DividerBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsJoinImportError}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource ErrorSoftBackgroundBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource ErrorSoftBorderBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock x:Name="JoinImportStatusText" Text="{Binding JoinImportStatusText}"
+                                   FontWeight="SemiBold" TextWrapping="Wrap" />
+                    </Border>
+                    <Button x:Name="SelectJoinGroupFileButton" Margin="0,16,0,0" HorizontalAlignment="Left"
+                            MinWidth="190" Padding="18,10" Content="Wybierz plik grupy"
+                            Command="{Binding SelectJoinGroupFileCommand}" />
+                </StackPanel>
+            </Border>
+
+            <Border x:Name="JoinSummaryPanel" Margin="0,16,0,0" Style="{StaticResource CardStyle}"
+                    Visibility="{Binding IsJoinSummaryStep, Converter={StaticResource BoolToVisibility}}">
+                <StackPanel>
+                    <TextBlock Text="Podsumowanie pliku grupy" FontSize="20" FontWeight="SemiBold" />
+                    <TextBlock Margin="0,5,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                               Text="To zamrożony podgląd zwalidowanego pliku. Nie zastosowano ustawień i nie uruchomiono współpracy." />
+
+                    <Grid Margin="0,18,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="16" />
+                            <ColumnDefinition Width="3*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Padding="16" CornerRadius="12" Background="{DynamicResource OkSoftBackgroundBrush}"
+                                BorderBrush="{DynamicResource OkSoftBorderBrush}" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock Text="GRUPA Z PLIKU" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold" />
+                                <TextBlock x:Name="JoinGroupNameText" Text="{Binding CurrentJoinProposal.GroupName}"
+                                           Margin="0,8,0,0" FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                <TextBlock Margin="0,10,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap">
+                                    <Run Text="Identyfikator: " />
+                                    <Run Text="{Binding CurrentJoinProposal.GroupId, Mode=OneWay}" FontWeight="SemiBold" />
+                                </TextBlock>
+                                <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap">
+                                    <Run Text="Protokół: " />
+                                    <Run Text="{Binding CurrentJoinProposal.ProtocolVersion, Mode=OneWay}" FontWeight="SemiBold" />
+                                    <Run Text=" • rewizja profilu: " />
+                                    <Run Text="{Binding CurrentJoinProposal.ProfileRevision, Mode=OneWay}" FontWeight="SemiBold" />
+                                </TextBlock>
+                                <TextBlock Margin="0,8,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap">
+                                    <Run Text="Aktywne maszyny: " />
+                                    <Run Text="{Binding CurrentJoinProposal.ActiveMachineCount, Mode=OneWay}" FontWeight="SemiBold" />
+                                    <Run Text=" z " />
+                                    <Run Text="{Binding CurrentJoinProposal.TotalMachineCount, Mode=OneWay}" FontWeight="SemiBold" />
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="2" Padding="16" CornerRadius="12" Background="{DynamicResource SurfaceAltBrush}"
+                                BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock Text="MASZYNY W PLIKU" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold" />
+                                <ItemsControl x:Name="JoinMachinesList" Margin="0,10,0,0"
+                                              ItemsSource="{Binding CurrentJoinProposal.Machines}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Margin="0,0,8,8" Padding="10,7" CornerRadius="8"
+                                                    Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                                                    <TextBlock Foreground="{DynamicResource TextSecondaryBrush}">
+                                                        <Run Text="profil: " />
+                                                        <Run Text="{Binding Profile, Mode=OneWay}" />
+                                                        <Run Text=" • " />
+                                                        <Run Text="{Binding StateText, Mode=OneWay}" />
+                                                    </TextBlock>
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <Border Margin="0,16,0,0" Padding="16" CornerRadius="12" Background="{DynamicResource SurfaceAltBrush}"
+                            BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock Text="RÓŻNICE WZGLĘDEM TEGO KOMPUTERA" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold" />
+                            <TextBlock x:Name="JoinProfileDifferenceText" Margin="0,8,0,8"
+                                       Text="{Binding CurrentJoinProposal.ProfileDifferenceText}"
+                                       FontWeight="SemiBold" TextWrapping="Wrap" />
+                            <ItemsControl x:Name="JoinDifferencesList" ItemsSource="{Binding CurrentJoinProposal.DifferenceRows}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,3,0,3">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="180" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding Label}" FontWeight="SemiBold" />
+                                            <TextBlock Grid.Column="1" Text="{Binding Value}" TextWrapping="Wrap" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Margin="0,16,0,0" Padding="12" CornerRadius="9" Background="{DynamicResource WarningSoftBackgroundBrush}"
+                            BorderBrush="{DynamicResource WarningSoftBorderBrush}" BorderThickness="1">
+                        <TextBlock TextWrapping="Wrap" FontWeight="SemiBold" Foreground="{DynamicResource WarningTextBrush}"
+                                   Text="W tym kroku nie ma jeszcze przycisku Dołącz i włącz — pojawi się dopiero w przygotowaniu tego komputera. Hasła VNC, konfiguracja, UAC, zapora i działający runtime pozostają bez zmian." />
+                    </Border>
+                    <DockPanel Margin="0,16,0,0" LastChildFill="False">
+                        <Button x:Name="BackToJoinFileButton" DockPanel.Dock="Left"
+                                MinWidth="150" Padding="18,10" Content="Wybierz inny plik"
+                                Command="{Binding BackToJoinFileCommand}" />
+                        <Button x:Name="UseGroupConfigurationButton" DockPanel.Dock="Right" Margin="16,0,0,0"
+                                MinWidth="230" Padding="18,10" Content="Użyj konfiguracji tej grupy"
+                                Command="{Binding UseGroupConfigurationCommand}" />
+                    </DockPanel>
+                </StackPanel>
+            </Border>
+
+            <Border x:Name="JoinPreparationPanel" Margin="0,16,0,0" Style="{StaticResource CardStyle}"
+                    Visibility="{Binding IsJoinPreparationStep, Converter={StaticResource BoolToVisibility}}">
+                <StackPanel>
+                    <TextBlock Text="Przygotowanie tego komputera" FontSize="20" FontWeight="SemiBold" />
+                    <TextBlock Margin="0,5,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                               Text="Sprawdzamy lokalnie, czego brakuje, aby ten komputer mógł obserwować maszyny z pliku grupy. Nic nie zostało zapisane." />
+
+                    <Grid Margin="0,18,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="16" />
+                            <ColumnDefinition Width="3*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Padding="16" CornerRadius="12" Background="{DynamicResource SurfaceAltBrush}"
+                                BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock Text="GOTOWOŚĆ TEGO KOMPUTERA" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold" />
+                                <TextBlock x:Name="JoinReadinessText" Text="{Binding JoinReadinessText}"
+                                           FontSize="17" FontWeight="SemiBold" Margin="0,8,0,0" TextWrapping="Wrap">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsJoinReadinessWarning}" Value="True">
+                                                    <Setter Property="Foreground" Value="{DynamicResource WarningTextBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBlock x:Name="JoinPasswordsReadinessText" Text="{Binding JoinPasswordsReadinessText}"
+                                           Margin="0,10,0,0" TextWrapping="Wrap" />
+                                <TextBlock x:Name="JoinOcrReadinessText" Text="{Binding JoinOcrReadinessText}"
+                                           Margin="0,5,0,0" TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding JoinReadinessDetail}" Foreground="{DynamicResource TextSecondaryBrush}"
+                                           Margin="0,8,0,0" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="2" Padding="16" CornerRadius="12" Background="{DynamicResource SurfaceAltBrush}"
+                                BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock Text="HASŁA VNC DO WPISANIA LOKALNIE" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold" />
+                                <TextBlock Margin="0,8,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                                           Text="Plik grupy nie przenosi haseł. Wpisz je niżej na tym komputerze albo w ustawieniach maszyn." />
+                                <TextBlock x:Name="JoinMissingPasswordsHintText" Text="{Binding JoinMissingPasswordsHint}"
+                                           Margin="0,10,0,0" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                <ItemsControl x:Name="JoinMissingPasswordsList" Margin="0,10,0,0"
+                                              ItemsSource="{Binding JoinMissingPasswordMachines}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Margin="0,0,8,8" Padding="10,7" CornerRadius="8"
+                                                    Background="{DynamicResource WarningSoftBackgroundBrush}" BorderBrush="{DynamicResource WarningSoftBorderBrush}" BorderThickness="1">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                                                    <TextBlock Margin="4,0,0,0" Text="{Binding Profile, StringFormat=— profil: {0}}" Foreground="{DynamicResource TextSecondaryBrush}" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <Border x:Name="JoinPasswordEntryPanel" Margin="0,16,0,0" Padding="16" CornerRadius="12"
+                            Background="{DynamicResource SurfaceAltBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1"
+                            Visibility="{Binding IsJoinPasswordEntryVisible, Converter={StaticResource BoolToVisibility}}">
+                        <StackPanel>
+                            <TextBlock Text="UZUPEŁNIJ HASŁA VNC NA TYM KOMPUTERZE" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold" />
+                            <TextBlock x:Name="JoinPasswordEntryHintText" Text="{Binding JoinPasswordEntryHint}"
+                                       Margin="0,8,0,0" TextWrapping="Wrap" />
+                            <CheckBox x:Name="JoinSharedPasswordCheckBox" Margin="0,12,0,0"
+                                      IsChecked="{Binding UseSharedJoinPassword}"
+                                      Content="Wszystkie te maszyny mają to samo hasło VNC" />
+
+                            <StackPanel x:Name="JoinSharedPasswordPanel" Orientation="Horizontal" Margin="0,10,0,0"
+                                        Visibility="{Binding IsJoinSharedPasswordMode, Converter={StaticResource BoolToVisibility}}">
+                                <TextBlock Text="Wspólne hasło VNC:" VerticalAlignment="Center" FontWeight="SemiBold" />
+                                <PasswordBox x:Name="JoinSharedPasswordBox" Width="220" Margin="10,0,0,0"
+                                             VerticalAlignment="Center"
+                                             PasswordChanged="JoinSharedPasswordBox_PasswordChanged" />
+                            </StackPanel>
+
+                            <ItemsControl x:Name="JoinPasswordEntriesList" Margin="0,10,0,0"
+                                          ItemsSource="{Binding JoinPasswordEntries}"
+                                          Visibility="{Binding IsJoinPerMachinePasswordMode, Converter={StaticResource BoolToVisibility}}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,0,0,6">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="230" />
+                                                <ColumnDefinition Width="230" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold"
+                                                       VerticalAlignment="Center" TextWrapping="Wrap" />
+                                            <PasswordBox Grid.Column="1" Width="210" HorizontalAlignment="Left"
+                                                         VerticalAlignment="Center"
+                                                         PasswordChanged="JoinMachinePasswordBox_PasswordChanged" />
+                                            <TextBlock Grid.Column="2" Margin="10,0,0,0" VerticalAlignment="Center"
+                                                       Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                                                       Text="{Binding Profile, StringFormat=profil: {0}}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <Button x:Name="SaveJoinPasswordsButton" Margin="0,8,0,0" HorizontalAlignment="Left"
+                                    MinWidth="260" Padding="18,10" Content="Zapisz hasła na tym komputerze"
+                                    Command="{Binding SaveJoinPasswordsCommand}" />
+                            <Border Margin="0,12,0,0" Padding="12" CornerRadius="9" BorderThickness="1"
+                                    Visibility="{Binding IsJoinPasswordSaveStatusVisible, Converter={StaticResource BoolToVisibility}}">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{DynamicResource OkSoftBackgroundBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource OkSoftBorderBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsJoinPasswordSaveError}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource WarningSoftBackgroundBrush}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource WarningSoftBorderBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock x:Name="JoinPasswordSaveStatusText" Text="{Binding JoinPasswordSaveStatusText}"
+                                           FontWeight="SemiBold" TextWrapping="Wrap" />
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Margin="0,16,0,0" Padding="12" CornerRadius="9" Background="{DynamicResource WarningSoftBackgroundBrush}"
+                            BorderBrush="{DynamicResource WarningSoftBorderBrush}" BorderThickness="1">
+                        <TextBlock x:Name="JoinApplyHintText" TextWrapping="Wrap" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource WarningTextBrush}" Text="{Binding JoinApplyHint}" />
+                    </Border>
+
+
+                    <Border x:Name="JoinFirewallReadinessPanel" Margin="0,16,0,0" Padding="14" CornerRadius="10"
+                            Background="{DynamicResource SurfaceAltBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1"
+                            Visibility="{Binding IsFirewallReadinessVisible, Converter={StaticResource BoolToVisibility}}">
+                        <StackPanel>
+                            <TextBlock Text="Gotowość komputera do reguły zapory" FontSize="17" FontWeight="SemiBold" />
+                            <TextBlock Margin="0,5,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Text="{Binding FirewallReadinessHint}" />
+                            <StackPanel Margin="0,12,0,0"
+                                        Visibility="{Binding IsLanInterfaceChoiceVisible, Converter={StaticResource BoolToVisibility}}">
+                                <TextBlock Text="INTERFEJS DO MASZYN" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold" />
+                                <ComboBox x:Name="JoinLanInterfaceCombo" Margin="0,6,0,0" MinWidth="320" HorizontalAlignment="Left"
+                                          ItemsSource="{Binding LanInterfaceChoices}" DisplayMemberPath="Display"
+                                          SelectedItem="{Binding SelectedLanInterface, Mode=TwoWay}" />
+                                <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Text="{Binding LanInterfaceChoiceHint}" />
+                            </StackPanel>
+                            <Border Margin="0,12,0,0" Padding="12" CornerRadius="9" BorderThickness="1"
+                                    Visibility="{Binding IsFirewallReadinessSummaryVisible, Converter={StaticResource BoolToVisibility}}">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{DynamicResource OkSoftBackgroundBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource OkSoftBorderBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsFirewallReadinessProblem}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource ErrorSoftBackgroundBrush}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource ErrorSoftBorderBrush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsFirewallReadinessRunning}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource WarningSoftBackgroundBrush}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource WarningSoftBorderBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <StackPanel>
+                                    <TextBlock x:Name="JoinFirewallReadinessSummaryText" Text="{Binding FirewallReadinessSummaryText}"
+                                               FontWeight="SemiBold" TextWrapping="Wrap" />
+                                    <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                                               Text="{Binding FirewallReadinessSummaryDetail}" />
+                                </StackPanel>
+                            </Border>
+                            <ItemsControl x:Name="JoinFirewallReadinessList" Margin="0,12,0,0"
+                                          ItemsSource="{Binding FirewallReadinessRows}"
+                                          ItemTemplate="{StaticResource ReadinessRowTemplate}" />
+                            <Border Margin="0,4,0,0" Padding="12" CornerRadius="9" BorderThickness="1"
+                                    Visibility="{Binding IsNetworkProfileStatusVisible, Converter={StaticResource BoolToVisibility}}">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{DynamicResource OkSoftBackgroundBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource OkSoftBorderBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsNetworkProfileError}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource ErrorSoftBackgroundBrush}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource ErrorSoftBorderBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock x:Name="JoinNetworkProfileStatusText" TextWrapping="Wrap" Text="{Binding NetworkProfileStatusText}" />
+                            </Border>
+                            <Border Margin="0,8,0,0" Padding="12" CornerRadius="9" BorderThickness="1"
+                                    Visibility="{Binding IsItInstructionStatusVisible, Converter={StaticResource BoolToVisibility}}">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{DynamicResource OkSoftBackgroundBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource OkSoftBorderBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsItInstructionError}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource ErrorSoftBackgroundBrush}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource ErrorSoftBorderBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock x:Name="JoinItInstructionStatusText" TextWrapping="Wrap" Text="{Binding ItInstructionStatusText}" />
+                            </Border>
+                            <WrapPanel Margin="0,12,0,0">
+                                <Button x:Name="JoinCheckFirewallReadinessButton" Margin="0,0,12,8" MinWidth="170" Padding="18,10"
+                                        Content="Sprawdź ponownie" Command="{Binding CheckFirewallReadinessCommand}" />
+                                <Button x:Name="JoinSetPrivateNetworkProfileButton" Margin="0,0,12,8" MinWidth="220" Padding="18,10"
+                                        Content="Ustaw profil Prywatny (UAC)" Command="{Binding SetPrivateNetworkProfileCommand}"
+                                        Visibility="{Binding CanSetPrivateNetworkProfile, Converter={StaticResource BoolToVisibility}}" />
+                                <Button x:Name="JoinExportItInstructionButton" Margin="0,0,12,8" MinWidth="220" Padding="18,10"
+                                        Content="Eksportuj instrukcję dla IT…" Command="{Binding ExportItInstructionCommand}"
+                                        Visibility="{Binding CanExportItInstruction, Converter={StaticResource BoolToVisibility}}" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="JoinApplyStatusPanel" Margin="0,16,0,0" Padding="14" CornerRadius="10"
+                            BorderThickness="1" Visibility="{Binding IsJoinApplyStatusVisible, Converter={StaticResource BoolToVisibility}}">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="{DynamicResource OkSoftBackgroundBrush}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource OkSoftBorderBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsJoinApplyError}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource ErrorSoftBackgroundBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource ErrorSoftBorderBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <StackPanel>
+                            <TextBlock x:Name="JoinApplyStatusText" Text="{Binding JoinApplyStatusText}"
+                                       FontSize="17" FontWeight="SemiBold" TextWrapping="Wrap" />
+                            <TextBlock x:Name="JoinApplyDetailText" Text="{Binding JoinApplyDetail}"
+                                       Margin="0,5,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Margin="0,16,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                               Text="Wstecz porzuca wczytane zaproszenie, bo plik grupy jest sekretem. Podsumowanie zobaczysz po ponownym wybraniu pliku." />
+                    <DockPanel Margin="0,10,0,0" LastChildFill="False">
+                        <Button x:Name="BackFromJoinPreparationButton" DockPanel.Dock="Left"
+                                MinWidth="150" Padding="18,10" Content="Wstecz"
+                                Command="{Binding BackFromJoinPreparationCommand}" />
+                        <Button x:Name="ApplyJoinButton" DockPanel.Dock="Right" Margin="16,0,0,0"
+                                MinWidth="190" Padding="18,10" Content="Dołącz i włącz"
+                                Command="{Binding ApplyJoinCommand}" />
+                        <Button x:Name="CheckGroupNetworkButton" DockPanel.Dock="Right" Margin="16,0,0,0"
+                                MinWidth="200" Padding="18,10" Content="Sprawdź sieć grupy"
+                                Command="{Binding CheckGroupNetworkCommand}" />
+                    </DockPanel>
+                </StackPanel>
+            </Border>
+
+            <Border x:Name="GroupDiagnosticsPanel" Margin="0,16,0,0" Style="{StaticResource CardStyle}"
+                    Visibility="{Binding IsGroupDiagnosticsStep, Converter={StaticResource BoolToVisibility}}">
+                <StackPanel>
+                    <TextBlock Text="Sieć grupy — sprawdzenie" FontSize="20" FontWeight="SemiBold" />
+                    <TextBlock x:Name="GroupDiagnosticsScopeText" Margin="0,5,0,0" Foreground="{DynamicResource TextSecondaryBrush}"
+                               TextWrapping="Wrap" Text="{Binding GroupDiagnosticsScopeText}" />
+
+                    <Border Margin="0,16,0,0" Padding="14" CornerRadius="10" BorderThickness="1"
+                            Visibility="{Binding IsGroupDiagnosticsResultVisible, Converter={StaticResource BoolToVisibility}}">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="{DynamicResource OkSoftBackgroundBrush}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource OkSoftBorderBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsGroupDiagnosticsWarning}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource WarningSoftBackgroundBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource WarningSoftBorderBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <StackPanel>
+                            <TextBlock x:Name="GroupDiagnosticsSummaryText" Text="{Binding GroupDiagnosticsSummaryText}"
+                                       FontSize="17" FontWeight="SemiBold" TextWrapping="Wrap" />
+                            <TextBlock x:Name="GroupDiagnosticsSummaryDetailText" Margin="0,5,0,0" Foreground="{DynamicResource TextSecondaryBrush}"
+                                       TextWrapping="Wrap" Text="{Binding GroupDiagnosticsSummaryDetail}" />
+                            <TextBlock x:Name="GroupDiagnosticsCheckedAtText" Margin="0,8,0,0" Foreground="{DynamicResource TextSecondaryBrush}"
+                                       TextWrapping="Wrap" Text="{Binding GroupDiagnosticsCheckedAtText}" />
+                        </StackPanel>
+                    </Border>
+
+                    <ItemsControl x:Name="GroupDiagnosticsList" Margin="0,16,0,0"
+                                  ItemsSource="{Binding GroupDiagnosticsRows}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,0,0,8" Padding="12" CornerRadius="10" BorderThickness="1">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource DividerBrush}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsOk}" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource OkSoftBackgroundBrush}" />
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource OkSoftBorderBrush}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsWaiting}" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource WarningSoftBackgroundBrush}" />
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource WarningSoftBorderBrush}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsProblem}" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource ErrorSoftBackgroundBrush}" />
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource ErrorSoftBorderBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="260" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Label}" FontWeight="SemiBold" TextWrapping="Wrap"
+                                                   VerticalAlignment="Top" Margin="0,0,12,0" />
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="{Binding Result}" FontSize="15" FontWeight="SemiBold"
+                                                       TextWrapping="Wrap" />
+                                            <TextBlock Text="{Binding Detail}" Margin="0,4,0,0" Foreground="{DynamicResource TextSecondaryBrush}"
+                                                       TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock Margin="0,6,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                               Text="Sprawdzenie tylko odczytuje stan, więc możesz je powtarzać bez ryzyka. Zielone wiersze nie zastępują odbioru na hali — o tym rozstrzyga próba na dwóch komputerach przy prawdziwych maszynach." />
+                    <DockPanel Margin="0,12,0,0" LastChildFill="False">
+                        <Button x:Name="BackFromGroupDiagnosticsButton" DockPanel.Dock="Left"
+                                MinWidth="150" Padding="18,10" Content="Wstecz"
+                                Command="{Binding BackFromGroupDiagnosticsCommand}" />
+                        <Button x:Name="RunGroupDiagnosticsButton" DockPanel.Dock="Right" Margin="16,0,0,0"
+                                MinWidth="190" Padding="18,10" Content="Sprawdź ponownie"
+                                Command="{Binding RunGroupDiagnosticsCommand}" />
+                    </DockPanel>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# uzycie: commit-msg <plik-komunikatu>
+set -euo pipefail
+
+plik="${1:?blad: brak pliku komunikatu}"
+linie=()
+while IFS= read -r linia || [ -n "$linia" ]; do
+  linia="${linia%$'\r'}"
+  case "$linia" in \#*) continue ;; esac
+  [ -n "${linia//[[:space:]]/}" ] && linie+=("$linia")
+done < "$plik"
+
+if [ "${#linie[@]}" -eq 0 ]; then
+  echo "blad: pusty komunikat commita" >&2; exit 1
+fi
+if [ "${#linie[@]}" -gt 1 ]; then
+  echo "blad: komunikat ma byc jedna linia tematu, bez tresci i stopek" >&2; exit 1
+fi
+temat="${linie[0]}"
+if [ -n "$(printf '%s' "$temat" | LC_ALL=C tr -d '\000-\177')" ]; then
+  echo "blad: temat zawiera znaki spoza ASCII (diakrytyki, emoji)" >&2; exit 1
+fi
+if [ "${#temat}" -gt 60 ]; then
+  echo "blad: temat ma ${#temat} znakow, limit 60" >&2; exit 1
+fi
+if printf '%s' "$temat" | grep -qi 'co-authored-by'; then
+  echo "blad: stopka Co-Authored-By jest zabroniona" >&2; exit 1
+fi
+if printf '%s' "$temat" | grep -qE '#[0-9]+'; then
+  echo "blad: temat nie moze odwolywac sie do numerow (#123)" >&2; exit 1
+fi
+if slowo="$(printf '%s' "$temat" | grep -oiE 'claude|codex|sesj|agent|repo' | head -n 1)"; then
+  echo "blad: zabronione slowo w temacie: $slowo" >&2; exit 1
+fi
+exit 0

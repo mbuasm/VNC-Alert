@@ -1,0 +1,13 @@
+<Window Style="{StaticResource {x:Type Window}}" x:Class="MaszynyAlert.App.Views.AdminLoginWindow"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ Title="VNC Alert — logowanie do panelu" Width="430" SizeToContent="Height" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Background="{DynamicResource PanelBackgroundBrush}">
+ <StackPanel Margin="28">
+  <TextBlock Text="Panel administracyjny" FontSize="24" FontWeight="SemiBold"/>
+  <TextBlock Text="Wpisz hasło panelu, aby zobaczyć raporty i diagnostykę." TextWrapping="Wrap" Margin="0,10,0,20"/>
+  <Label Target="{Binding ElementName=Password}" Content="Hasło panelu"/>
+  <PasswordBox x:Name="Password" Padding="10"/>
+  <TextBlock x:Name="ErrorText" Foreground="{DynamicResource ErrorTextBrush}" TextWrapping="Wrap" Margin="0,12"/>
+  <Button x:Name="LoginButton" Content="Otwórz panel" Click="Login_Click" IsDefault="True" Style="{StaticResource PrimaryButtonStyle}"/>
+  <Button Content="Anuluj" IsCancel="True" Margin="0,8,0,0"/>
+ </StackPanel>
+</Window>

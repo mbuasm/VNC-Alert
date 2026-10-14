@@ -1,0 +1,33 @@
+<Window Style="{StaticResource {x:Type Window}}" x:Class="MaszynyAlert.App.Views.ChangeConfirmationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="VNC Alert — potwierdzenie zmian"
+        Width="560" SizeToContent="Height" MaxHeight="640" MinHeight="220"
+        ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        Background="{DynamicResource PanelBackgroundBrush}">
+    <DockPanel Margin="20,16,20,16">
+        <TextBlock DockPanel.Dock="Top" Text="Czy na pewno chcesz zapisać te zmiany?" FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap" />
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
+            <Button x:Name="CancelButton" Content="Anuluj" IsCancel="True" Padding="16,6" Click="CancelButton_Click" />
+            <Button x:Name="ConfirmButton" Content="Zapisz" IsDefault="True" Style="{StaticResource AccentButtonStyle}" Padding="16,6"
+                    Margin="8,0,0,0" Click="ConfirmButton_Click" />
+        </StackPanel>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,10,0,0">
+            <ItemsControl x:Name="ChangeList" Focusable="False">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,0,0,6" Padding="10,6" CornerRadius="8" BorderThickness="1"
+                                Background="{DynamicResource SurfaceAltBrush}" BorderBrush="{DynamicResource DividerBrush}">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding BeforeText}" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                                           Visibility="{Binding BeforeText, Converter={StaticResource NullToVisibility}}" />
+                                <TextBlock Text="{Binding AfterText}" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

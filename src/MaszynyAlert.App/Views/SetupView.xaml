@@ -1,0 +1,95 @@
+<UserControl x:Class="MaszynyAlert.App.Views.SetupView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DockPanel Margin="12">
+        <DockPanel DockPanel.Dock="Bottom" Margin="0,10,0,0">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <Button x:Name="CancelButton" Content="Anuluj" Padding="16,6" Click="CancelButton_Click" />
+                <Button x:Name="SaveButton" Content="Zapisz" Style="{StaticResource AccentButtonStyle}"
+                        Background="{DynamicResource OkGreenBrush}" Margin="8,0,0,0" Click="SaveButton_Click" />
+            </StackPanel>
+            <TextBlock x:Name="StatusText" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,12,0"
+                       Foreground="{DynamicResource TextSecondaryBrush}" />
+        </DockPanel>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel x:Name="SectionsPanel">
+                <TextBlock Text="Ustawienia" FontSize="28" FontWeight="SemiBold" Margin="8,8,0,20"/>
+                <TextBlock x:Name="SecretsElsewhereText" Visibility="Collapsed" TextWrapping="Wrap" Margin="8,0,0,14"
+                           Foreground="{DynamicResource TextSecondaryBrush}"
+                           Text="Klucz sieciowy i token dostępu do katalogu wydań ustawia się w Panelu administracyjnym (za hasłem): Ustawienia → Ten komputer." />
+                <GroupBox Header="Połączenie z maszynami" Margin="0,0,0,10">
+                    <StackPanel Margin="4">
+                        <CheckBox x:Name="SamePasswordCheckBox" Content="To samo hasło dla wszystkich maszyn"
+                                  IsChecked="{Binding SamePasswordForAllMachines}" Margin="0,0,0,8"
+                                  Checked="SamePasswordCheckBox_CheckedChanged" Unchecked="SamePasswordCheckBox_CheckedChanged" />
+
+                        <StackPanel x:Name="SharedPasswordPanel" Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBlock Text="Hasło:" Width="70" VerticalAlignment="Center" />
+                            <PasswordBox x:Name="SharedPasswordBox" Width="260" />
+                        </StackPanel>
+
+                        <TextBlock Text="Hasła pozostaw puste, jeśli połączenia już działają." Margin="0,4,0,4" />
+                        <StackPanel x:Name="MachinePasswordsPanel" />
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox x:Name="NetworkKeyGroup" Header="Klucz sieciowy" Margin="0,0,0,10">
+                    <StackPanel Margin="4">
+                        <TextBlock Text="Ten sam klucz musi być wpisany na wszystkich komputerach."
+                                   TextWrapping="Wrap" Margin="0,0,0,6" />
+                        <TextBlock x:Name="NetworkKeyState" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,0,0,6" />
+                        <TextBox x:Name="NetworkKeyTextBox" Text="{Binding NetworkKeyBase64, UpdateSourceTrigger=PropertyChanged}"
+                                 FontFamily="Consolas" />
+                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                            <Button x:Name="GenerateKeyButton" Content="Generuj" Padding="10,4" Click="GenerateKeyButton_Click" />
+                            <Button x:Name="CopyKeyButton" Content="Kopiuj" Padding="10,4" Margin="8,0,0,0" Click="CopyKeyButton_Click" />
+                            <Button x:Name="PasteKeyButton" Content="Wklej" Padding="10,4" Margin="8,0,0,0" Click="PasteKeyButton_Click" />
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Hasło Panelu administracyjnego" Margin="0,0,0,16">
+                    <StackPanel Margin="8">
+                        <TextBlock Text="Raporty postojów i diagnostyka są dostępne po wpisaniu tego hasła. Puste pola pozostawiają dotychczasowe hasło." TextWrapping="Wrap" Margin="0,0,0,8"/>
+                        <Label Target="{Binding ElementName=CurrentAdminPassword}" Content="Obecne hasło (przy zmianie)"/>
+                        <PasswordBox x:Name="CurrentAdminPassword" Padding="6"/>
+                        <Label Target="{Binding ElementName=NewAdminPassword}" Content="Nowe hasło — co najmniej 10 znaków"/>
+                        <PasswordBox x:Name="NewAdminPassword" Padding="6"/>
+                        <Label Target="{Binding ElementName=ConfirmAdminPassword}" Content="Powtórz nowe hasło"/>
+                        <PasswordBox x:Name="ConfirmAdminPassword" Padding="6"/>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Header="Ten komputer">
+                    <StackPanel Margin="4">
+                        <StackPanel x:Name="PriorityPanel">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                            <TextBlock Text="Priorytet:" Width="70" VerticalAlignment="Center" />
+                            <TextBox x:Name="PriorityTextBox" Width="80" Text="{Binding PriorityText, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <TextBlock Text="Mniejsza liczba = ten komputer chętniej zostaje obserwatorem."
+                                   Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="70,0,0,10" />
+                        </StackPanel>
+
+                        <CheckBox Content="Uruchamiaj przy logowaniu" IsChecked="{Binding AutostartEnabled}" />
+                        <CheckBox Content="Pokazuj powiadomienia Windows" IsChecked="{Binding WindowsNotificationsEnabled}" Margin="0,12,0,0"/>
+                        <TextBlock Text="Okna VNC Alert i dźwięki alarmów działają również po wyłączeniu powiadomień Windows." TextWrapping="Wrap" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,6,0,0"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox x:Name="UpdatesGroup" Header="Aktualizacje — katalog wydań (Cloudflare Access)" Margin="0,10,0,0">
+                    <StackPanel Margin="4">
+                        <TextBlock Text="Katalog wydań jest za logowaniem Cloudflare Access; token usługi tworzy administrator w Zero Trust (Access → Service Auth)."
+                                   TextWrapping="Wrap" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,8" />
+                        <Label Target="{Binding ElementName=UpdatesClientIdTextBox}" Content="Identyfikator tokenu dostępu"/>
+                        <TextBox x:Name="UpdatesClientIdTextBox" Text="{Binding UpdatesAccessClientId, UpdateSourceTrigger=PropertyChanged}"
+                                 FontFamily="Consolas" />
+                        <Label Target="{Binding ElementName=UpdatesSecretBox}" Content="Sekret tokenu dostępu" Margin="0,6,0,0"/>
+                        <PasswordBox x:Name="UpdatesSecretBox" Padding="6" />
+                        <TextBlock x:Name="UpdatesSecretState" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,6,0,0" />
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

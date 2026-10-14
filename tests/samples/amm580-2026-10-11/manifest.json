@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "sourceRoot": "diagnoza hali 11.10.2026, PC #1 (MAROAI): probe.exe diagnoza --tryb szybki --machines amm580 (pakiet tools/diagnoza-hali, commit b7c7fe1), out/diagnoza/amm580/klatki i ocr",
+  "capturedAt": "2026-10-11",
+  "note": "Dwie NATYWNE klatki 800x600 maszyny 580 (RealVNC Server, RA2_256, 32bpp depth 24 BGRA32 LE) z pierwszych 5 s przebiegu 19:10:57-19:45:57; przez caly przebieg (402 klatki) ekran stal w tym samym stanie: zakladka Auto, 'IDLE: Normal Stop', czerwony pasek '{T8} Tool life was reached. Please change the tool.', postep 0 %. Zegar HMI spieszy sie o ok. 5 h 59 min wzgledem PC (na ekranie 2026-10-12 01:10). Nazwa programu na ekranie to nazwa pliku z data, bez danych osobowych. Plik OCR to doslowny odczyt Windows OCR en-US calej klatki 191057 zapisany przez probe (slowa z prostokatami we wspolrzednych klatki).",
+  "samples": [
+    {
+      "id": "amm580-2026-10-11-normal-stop-t8-tool-life-0",
+      "samplePath": "580-2026-10-11-191057-normal-stop-t8-tool-life-0.png",
+      "sourceRelativePath": "out-PC1-20261011-1910/out/diagnoza/amm580/klatki/20261011-191057-0000-start.png",
+      "sha256": "E2000E663AFBB74F1F6B2647A8CD08585949AFCB706EA14876CFD0BB9BBFCFB8",
+      "evidence": "Pierwsza klatka przebiegu (0 s). 'IDLE: Normal Stop' na ZAKLADCE AUTO (dotad jedyna klatka Normal Stop byla z zakladki Manual), czerwony pasek '{T8} Tool life' w statusBarRoi 75,1 % barwy (probe: amm580/amm580 0,75102 we wszystkich 402 klatkach), tor paska postepu pusty (0 %), wskazniki OFF czerwone. VNC Alert 0.4.148 na tym PC wyciszal ten komunikat regula amm580-tool-life przez caly okres 08-11.10."
+    },
+    {
+      "id": "amm580-2026-10-11-normal-stop-dymek-realvnc",
+      "samplePath": "580-2026-10-11-191102-normal-stop-dymek-realvnc.png",
+      "sourceRelativePath": "out-PC1-20261011-1910/out/diagnoza/amm580/klatki/20261011-191102-0001.png",
+      "sha256": "50ED11321ACAC1207D616E5ABFB375083B4D9CEA89F55F4B2C9CE923CD892CCB",
+      "evidence": "Ten sam stan po 5 s, ale w prawym dolnym rogu stoja DWA powiadomienia serwera RealVNC ('An anonymous user has disconnected/connected. Number of connected users: 2') - drugi klient to dzialajacy rownolegle VNC Alert. Dymki zaslaniaja x 480-800, y 463-600 (suwak posuwu i F5-F8); zaden obszar profilu amm580 ich nie dotyka."
+    }
+  ],
+  "ocr": {
+    "samplePath": "580-2026-10-11-191057-ocr-en-US.json",
+    "sourceRelativePath": "out-PC1-20261011-1910/out/diagnoza/amm580/ocr/20261011-191057-en-US.json",
+    "sha256": "A1A29DEF50072D7286B21044634C0DCE38BCD43323215C79AC43AC65F2F6C721",
+    "sha256Note": "hash tresci z koncami linii LF (git moze zapisac plik z CRLF; test normalizuje przed liczeniem)"
+  },
+  "statusBarOcrFromVncAlert": [
+    "2 {T8} Tool life was reached. Please change the tool.",
+    "{T8} Tool life was reached. Please change the tool.",
+    "2 {T 1} Tool life was reached. Please change the tool.",
+    "2 {T4} Tool life was reached. Please change the tool.",
+    "2 {T3}{T8} Tool life was reached. Please change ne tool."
+  ],
+  "statusBarOcrSource": "logi VNC Alert 0.3.408-0.4.148 z PC1 (MAROAI) 28.09-11.10.2026, wiersze 'OCR surowy' maszyny amm580 - wszystkie rozne odczyty paska po 29.09 (110x T8 z '2', 8x T8 bez '2', 8x 'T 1', 3x T4) plus wariant 'change ne tool' z 28.09"
+}

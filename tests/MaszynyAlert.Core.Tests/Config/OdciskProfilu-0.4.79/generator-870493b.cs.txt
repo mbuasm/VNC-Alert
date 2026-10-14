@@ -1,0 +1,64 @@
+using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
+using MaszynyAlert.Core.Config;
+using MaszynyAlert.Core.Tests.TestUtil;
+
+namespace MaszynyAlert.Core.Tests;
+
+public sealed class U02GoldenGen
+{
+    [Fact]
+    public void Generate()
+    {
+        string outDir = Environment.GetEnvironmentVariable("U02_OUT")!;
+        Directory.CreateDirectory(outDir);
+        var rules = ConfigLoader.LoadRules(TestPaths.RulesExample);
+        var cfg = TestPaths.ExampleConfig;
+        var profiles = new Dictionary<string, GroupProfile>
+        {
+            ["przyklad"] = GroupProfile.Capture(cfg, rules, new Dictionary<string, string> { ["code:705"] = "Sprawdź alarm osi 6." }),
+            ["hala-wszystkie-wlaczone"] = GroupProfile.Capture(cfg with
+            {
+                Machines = cfg.Machines.Select(m => m.Id == "amm580"
+                    ? m with { Enabled = true, Username = "operator", RsaAesKeySha256 = new string('a', 64), Comment = null }
+                    : m with { Enabled = true }).ToList()
+            }, rules, new Dictionary<string, string>()),
+            ["bez-sekcji-opcjonalnych"] = GroupProfile.Capture(cfg with
+            {
+                Profiles = cfg.Profiles.ToDictionary(p => p.Key, p => p.Value with
+                {
+                    MainScreen = null, ProgramState = null,
+                    Idle = p.Value.Idle is { } idle ? idle with { ProgressBar = null } : null
+                }),
+                Timing = cfg.Timing with { PollIntervalMs = 1500 }
+            }, rules, new Dictionary<string, string>()),
+            ["jedna-maszyna"] = GroupProfile.Capture(cfg with
+            {
+                Machines = cfg.Machines.Take(1).Select(m => m with { Username = "", Comment = "notatka" }).ToList()
+            }, rules, new Dictionary<string, string>()),
+        };
+        var lines = new List<string>();
+        foreach (var (name, profile) in profiles)
+        {
+            File.WriteAllBytes(Path.Combine(outDir, name + ".json"), JsonSerializer.SerializeToUtf8Bytes(profile,
+                GroupFileCodec.Options));
+            lines.Add($"{name} {GroupFileCodec.ProfileHash(profile)}");
+        }
+        File.WriteAllLines(Path.Combine(outDir, "hashes.txt"), lines);
+
+        // Lista (typ.pole JSON) wszystkich typów obiektowych osiągalnych z GroupProfile w tej wersji.
+        var seen = new HashSet<Type>();
+        var fields = new SortedSet<string>(StringComparer.Ordinal);
+        void Walk(Type t)
+        {
+            if (!seen.Add(t)) return;
+            var info = GroupFileCodec.Options.GetTypeInfo(t);
+            if (info.Kind == JsonTypeInfoKind.Object)
+                foreach (var p in info.Properties) { fields.Add($"{t.Name}.{p.Name}"); Walk(p.PropertyType); }
+            else if (info.Kind is JsonTypeInfoKind.Enumerable or JsonTypeInfoKind.Dictionary && info.ElementType is { } e)
+                Walk(e);
+        }
+        Walk(typeof(GroupProfile));
+        File.WriteAllLines(Path.Combine(outDir, "fields.txt"), fields);
+    }
+}

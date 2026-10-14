@@ -1,0 +1,12 @@
+<Window Style="{StaticResource {x:Type Window}}" x:Class="MaszynyAlert.App.Views.SetupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="VNC Alert — Ustawienia"
+        Width="640" Height="720"
+        MinWidth="560" MinHeight="500"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource PanelBackgroundBrush}">
+    <!-- Treść Ustawień jest w SetupView — tej samej, którą pokazuje Panel administracyjny
+         (zakładka Ustawienia → „Ten komputer”). Okno jest tylko ramką dla pierwszego uruchomienia
+         i dla osobnego edytora z UAC (argument setup). -->
+</Window>

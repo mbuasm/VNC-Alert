@@ -1,0 +1,165 @@
+{
+  "description": "Natywne klatki 580 (800x600, probe capture przez VNC) do pomiaru pola postepu i paska postepu. Wartosci 'progressPercentOnScreen' odczytane wzrokowo z liczby na HMI; 'barColumns' = liczba wypelnionych kolumn toru paska (x 422-771, y 277-286; 350 kolumn). Zrodlo: seria 'probe capture' ze stanowiska 520/580 z 25.09.2026 (out-580-seria, out-580-0proc).",
+  "barTrack": {
+    "x": 422,
+    "y": 277,
+    "width": 350,
+    "height": 10
+  },
+  "barRule": "p = 0 przy 0 kolumnach, 100 przy 350, w pozostalych round((kolumny + 2.5) / 3.54) — zgodne z liczba na HMI na 84/84 klatkach (0-41 %)",
+  "frames": [
+    {
+      "file": "580-10-procent-2026-09-25.png",
+      "state": "RUN: Normal",
+      "progressPercentOnScreen": 10,
+      "barColumns": 33,
+      "runBoxGreen": true,
+      "sourceCapture": null,
+      "evidence": "stanowisko 25.09 08:38, probe capture; identyczna z production-amm580/auto-praca-10-procent-2026-09-25.png"
+    },
+    {
+      "file": "580-17-procent-2026-09-25.png",
+      "state": "RUN: Normal",
+      "progressPercentOnScreen": 17,
+      "barColumns": 58,
+      "runBoxGreen": true,
+      "sourceCapture": null,
+      "evidence": "stanowisko 25.09 09:41 (folder out-580-14proc — na HMI 17 %, nie 14 %)"
+    },
+    {
+      "file": "580-2026-09-25-104520-idle-abort-25.png",
+      "state": "IDLE: Abort",
+      "progressPercentOnScreen": 25,
+      "barColumns": 86,
+      "runBoxGreen": false,
+      "sourceCapture": "capture_192.168.1.110_5900_20260925-104520.png",
+      "evidence": "program przerwany (IDLE: Abort) przy 25 %; srodkowe pudelko komunikatu puste, brak czerwieni; pasek i liczba identyczne co do piksela z praca przy 25 % (114133)"
+    },
+    {
+      "file": "580-2026-09-25-105517-run-0.png",
+      "state": "RUN: Normal",
+      "progressPercentOnScreen": 0,
+      "barColumns": 0,
+      "runBoxGreen": true,
+      "sourceCapture": "capture_192.168.1.110_5900_20260925-105517.png",
+      "evidence": "praca od poczatku po Abort; HMI pokazuje 0% w stanie RUN"
+    },
+    {
+      "file": "580-2026-09-25-105548-run-0.png",
+      "state": "RUN: Normal",
+      "progressPercentOnScreen": 0,
+      "barColumns": 0,
+      "runBoxGreen": true,
+      "sourceCapture": "capture_192.168.1.110_5900_20260925-105548.png",
+      "evidence": "out-580-0proc; OCR en-US x3 nie czyta 0%"
+    },
+    {
+      "file": "580-2026-09-25-105836-run-0.png",
+      "state": "RUN: Normal",
+      "progressPercentOnScreen": 0,
+      "barColumns": 0,
+      "runBoxGreen": true,
+      "sourceCapture": "capture_192.168.1.110_5900_20260925-105836.png",
+      "evidence": "nadal 0% w stanie RUN 3 min 19 s po 105517 — zero z ekranu bez bramki RUN daloby falszywe 'Stoi na 0 %'"
+    },
+    {
+      "file": "580-2026-09-25-110103-run-1.png",
+      "state": "RUN: Normal",
+      "progressPercentOnScreen": 1,
+      "barColumns": 1,
+      "runBoxGreen": true,
+      "sourceCapture": "capture_192.168.1.110_5900_20260925-110103.png",
+      "evidence": "1 %: wypelniona tylko kolumna x 422 (6 z 10 pikseli)"
+    },
+    {
+      "file": "580-2026-09-25-110305-run-1-kursor.png",
+      "state": "RUN: Normal",
+      "progressPercentOnScreen": 1,
+      "barColumns": 1,
+      "runBoxGreen": true,
+      "sourceCapture": "capture_192.168.1.110_5900_20260925-110305.png",
+      "evidence": "1 %, kursor myszy w srodkowym pudelku komunikatu"
+    },
+    {
+      "file": "580-2026-09-25-110405-run-2.png",
+      "state": "RUN: Normal",
+      "progressPercentOnScreen": 2,
+      "barColumns": 5,
+      "runBoxGreen": true,
+      "sourceCapture": "capture_192.168.1.110_5900_20260925-110405.png",
+      "evidence": "OCR en-US x3 czyta 'Progress: 2%'"
+    },
+    {
+      "file": "580-2026-09-25-110909-run-5.png",
+      "state": "RUN: Normal",
+      "progressPercentOnScreen": 5,
+      "barColumns": 15,
+      "runBoxGreen": true,
+      "sourceCapture": "capture_192.168.1.110_5900_20260925-110909.png",
+      "evidence": "OCR en-US x3 nie czyta"
+    },
+    {
+      "file": "580-2026-09-25-111614-run-10.png",
+      "state": "RUN: Normal",
+      "progressPercentOnScreen": 10,
+      "barColumns": 33,
+      "runBoxGreen": true,
+      "sourceCapture": "capture_192.168.1.110_5900_20260925-111614.png",
+      "evidence": "pierwsza liczba dwucyfrowa serii; OCR en-US x3 nie czyta"
+    },
+    {
+      "file": "580-2026-09-25-112320-run-14.png",
+      "state": "RUN: Normal",
+      "progressPercentOnScreen": 14,
+      "barColumns": 47,
+      "runBoxGreen": true,
+      "sourceCapture": "capture_192.168.1.110_5900_20260925-112320.png",
+      "evidence": "14 % — wartosc zgloszona przez uzytkownika; OCR en-US x3 nie czyta"
+    },
+    {
+      "file": "580-2026-09-25-114133-run-25.png",
+      "state": "RUN: Normal",
+      "progressPercentOnScreen": 25,
+      "barColumns": 86,
+      "runBoxGreen": true,
+      "sourceCapture": "capture_192.168.1.110_5900_20260925-114133.png",
+      "evidence": "25 % w pracy — porownanie z Abort 104520"
+    },
+    {
+      "file": "580-2026-09-25-115442-run-33.png",
+      "state": "RUN: Normal",
+      "progressPercentOnScreen": 33,
+      "barColumns": 114,
+      "runBoxGreen": true,
+      "sourceCapture": "capture_192.168.1.110_5900_20260925-115442.png",
+      "evidence": "ostatnia wartosc liczona poprawnie przez stare okno barwy 180-210 st."
+    },
+    {
+      "file": "580-2026-09-25-115543-run-34.png",
+      "state": "RUN: Normal",
+      "progressPercentOnScreen": 34,
+      "barColumns": 118,
+      "runBoxGreen": true,
+      "sourceCapture": "capture_192.168.1.110_5900_20260925-115543.png",
+      "evidence": "okno 180-210 st. daje 116 kolumn — wypelnienie przechodzi w turkus (gradient poziomy)"
+    },
+    {
+      "file": "580-2026-09-25-120550-run-39.png",
+      "state": "RUN: Normal",
+      "progressPercentOnScreen": 39,
+      "barColumns": 136,
+      "runBoxGreen": true,
+      "sourceCapture": "capture_192.168.1.110_5900_20260925-120550.png",
+      "evidence": "najmniejszy margines wzoru ceil(kol/3,5)"
+    },
+    {
+      "file": "580-2026-09-25-120953-run-41.png",
+      "state": "RUN: Normal",
+      "progressPercentOnScreen": 41,
+      "barColumns": 143,
+      "runBoxGreen": true,
+      "sourceCapture": "capture_192.168.1.110_5900_20260925-120953.png",
+      "evidence": "najwyzsza zmierzona wartosc; barwa na prawym koncu wypelnienia 174 st.; OCR en-US x3 czyta '41%'"
+    }
+  ]
+}

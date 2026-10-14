@@ -1,0 +1,191 @@
+<UserControl x:Class="MaszynyAlert.App.Views.SharedConfigView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <Style x:Key="CompactButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Padding" Value="12,5" />
+            <Setter Property="Margin" Value="0,0,8,4" />
+        </Style>
+        <Style x:Key="CompactAccentButton" TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
+            <Setter Property="Padding" Value="12,5" />
+            <Setter Property="Margin" Value="0,0,8,4" />
+        </Style>
+
+        <!-- Jeden zwarty wiersz ustawienia (~30 DIP). Kliknięcie albo fokus w polu zaznacza wiersz (SharedConfigView.xaml.cs). -->
+        <DataTemplate x:Key="SettingRowTemplate">
+            <Border x:Name="Row" Padding="6,1" Margin="0,0,0,1" CornerRadius="6" BorderThickness="1"
+                    Background="Transparent" BorderBrush="Transparent"
+                    PreviewMouseLeftButtonDown="Row_Activated" GotKeyboardFocus="Row_Activated">
+                <Grid x:Name="RowGrid" MinHeight="28">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" MinWidth="140" />
+                        <ColumnDefinition Width="160" />
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="12" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="LabelText" Text="{Binding Label}" VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,10,0" />
+                    <CheckBox x:Name="MachineBox" Grid.ColumnSpan="2" IsChecked="{Binding Flag}" VerticalAlignment="Center"
+                              Visibility="Collapsed" AutomationProperties.Name="{Binding Label}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Label}" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding Detail}" VerticalAlignment="Center" Margin="10,0,0,0" FontSize="12"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </CheckBox>
+                    <TextBox Grid.Column="1" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" Padding="6,1"
+                             VerticalAlignment="Center"
+                             Visibility="{Binding IsTextInput, Converter={StaticResource BoolToVisibility}}" />
+                    <CheckBox Grid.Column="1" IsChecked="{Binding Flag}" Content="Włączone" VerticalAlignment="Center"
+                              Visibility="{Binding IsFlag, Converter={StaticResource BoolToVisibility}}" />
+                    <ComboBox Grid.Column="1" ItemsSource="{Binding Choices}" SelectedItem="{Binding Text}" Padding="8,2" MinHeight="26"
+                              VerticalAlignment="Center"
+                              Visibility="{Binding IsChoice, Converter={StaticResource BoolToVisibility}}" />
+                    <TextBlock Grid.Column="2" Text="{Binding Unit}" VerticalAlignment="Center" Margin="8,0,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}" />
+                    <!-- Znacznik niezapisanej zmiany w tym wierszu. -->
+                    <TextBlock x:Name="ChangedMark" Grid.Column="3" Text="•" FontWeight="Bold" VerticalAlignment="Center"
+                               Foreground="{DynamicResource AccentBrush}" Visibility="Collapsed"
+                               ToolTip="Zmienione — jeszcze nie zapisane" />
+                </Grid>
+            </Border>
+            <DataTemplate.Triggers>
+                <!-- Wiersz maszyny jest niższy (24 DIP): dwanaście maszyn z config.example.json ma się zmieścić na 1220 × 850
+                     bez przewijania także w grupie (SharedConfigViewLayoutTests.MachinesSectionWithTwelveMachines…). -->
+                <DataTrigger Binding="{Binding IsMachine}" Value="True">
+                    <Setter TargetName="LabelText" Property="Visibility" Value="Collapsed" />
+                    <Setter TargetName="MachineBox" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="RowGrid" Property="MinHeight" Value="24" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                    <Setter TargetName="Row" Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsChanged}" Value="True">
+                    <Setter TargetName="ChangedMark" Property="Visibility" Value="Visible" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding HasError}" Value="True">
+                    <Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource ErrorBorderBrush}" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <!-- Pozycja spisu sekcji: nazwa i znacznik „błąd” / „zmiany”. -->
+        <DataTemplate x:Key="SectionItemTemplate">
+            <DockPanel>
+                <TextBlock x:Name="Mark" DockPanel.Dock="Right" Text="{Binding StatusText}" FontSize="12" FontWeight="SemiBold"
+                           Margin="8,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource AccentBrush}"
+                           Visibility="{Binding StatusText, Converter={StaticResource NullToVisibility}}" />
+                <TextBlock Text="{Binding Title}" TextWrapping="Wrap" VerticalAlignment="Center" />
+            </DockPanel>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding HasErrors}" Value="True">
+                    <Setter TargetName="Mark" Property="Foreground" Value="{DynamicResource AlertRedBrush}" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid x:Name="PageGrid" Margin="16,10,16,10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Nagłówek w jednej linii: tytuł i skrót o warstwach (pełny tekst w podpowiedzi), pod nim zdanie o grupie / błąd. -->
+        <StackPanel>
+            <DockPanel>
+                <TextBlock Text="Konfiguracja" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,12,0" />
+                <TextBlock x:Name="LayersLine" Text="{Binding LayersText}" ToolTip="{Binding LayersText}" FontSize="12.5"
+                           Foreground="{DynamicResource TextSecondaryBrush}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+            </DockPanel>
+            <TextBlock x:Name="SyncStatusText" Text="{Binding SyncStatus}" Foreground="{DynamicResource AccentBrush}" TextWrapping="Wrap"
+                       FontSize="12.5" Margin="0,2,0,0" Visibility="{Binding SyncStatus, Converter={StaticResource NullToVisibility}}" />
+            <TextBlock x:Name="LoadErrorText" Text="{Binding LoadError}" Foreground="{DynamicResource AlertRedBrush}" TextWrapping="Wrap"
+                       Margin="0,2,0,0" Visibility="{Binding LoadError, Converter={StaticResource NullToVisibility}}" />
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="0,8,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="190" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ListBox x:Name="SectionList" ItemsSource="{Binding Sections}" SelectedItem="{Binding SelectedSection}"
+                     ItemTemplate="{StaticResource SectionItemTemplate}" Margin="0,0,14,0"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="Sekcje konfiguracji" />
+
+            <!-- Wiersze i szczegóły. Szeroko: kolumna 0 = tytuł + wiersze, kolumna 1 = szczegóły (na całą wysokość).
+                 Wąsko: szczegóły w wierszu 2 pod wierszami, kolumna 1 zwinięta (ApplyResponsiveLayout). -->
+            <Grid x:Name="ContentGrid" Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition x:Name="DetailColumn" Width="300" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Margin="0,0,0,4">
+                    <TextBlock x:Name="SectionTitleText" Text="{Binding SelectedSection.Title}" FontSize="16" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding SelectedSection.SourceText}" Foreground="{DynamicResource TextSecondaryBrush}"
+                               FontSize="12" TextTrimming="CharacterEllipsis" ToolTip="{Binding SelectedSection.SourceText}" />
+                    <!-- Sekcja bez wierszy (np. „Maszyny” przy pustej liście maszyn w konfiguracji). -->
+                    <TextBlock x:Name="EmptySectionText" Text="{Binding SelectedSection.EmptyText}" TextWrapping="Wrap" Margin="0,6,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"
+                               Visibility="{Binding SelectedSection.EmptyText, Converter={StaticResource NullToVisibility}}" />
+                </StackPanel>
+
+                <!-- SettingRows musi zostać bezpośrednim dzieckiem ScrollViewera (SharedConfigViewLayoutTests mierzą go przez Parent). -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ItemsControl x:Name="SettingRows" ItemsSource="{Binding SelectedSection.Fields}"
+                                  ItemTemplate="{StaticResource SettingRowTemplate}" Focusable="False" />
+                </ScrollViewer>
+
+                <!-- Opis zaznaczonego ustawienia — w jednym miejscu, nie przy każdym wierszu. -->
+                <Border x:Name="DetailPanel" Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" Margin="14,0,0,0" Padding="12,8" CornerRadius="10"
+                        BorderThickness="1" Background="{DynamicResource SurfaceAltBrush}" BorderBrush="{DynamicResource DividerBrush}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel>
+                            <TextBlock Text="{Binding SelectedField.Label}" FontWeight="SemiBold" TextWrapping="Wrap" />
+                            <TextBlock x:Name="DetailDescriptionText" Text="{Binding SelectedField.Description}" TextWrapping="Wrap" Margin="0,3,0,0"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                       Visibility="{Binding SelectedField.Description, Converter={StaticResource NullToVisibility}}" />
+                            <TextBlock Text="{Binding SelectedField.DefaultHint}" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"
+                                       TextWrapping="Wrap" Margin="0,6,0,0" />
+                            <TextBlock x:Name="DetailKeyText" Text="{Binding SelectedField.Key}" Foreground="{DynamicResource TextMutedBrush}" FontFamily="Consolas" FontSize="12"
+                                       TextWrapping="Wrap" Margin="0,2,0,0"
+                                       Visibility="{Binding SelectedField.KeyDiffersFromLabel, Converter={StaticResource BoolToVisibility}}" />
+                            <TextBlock x:Name="DetailErrorText" Text="{Binding SelectedField.Error}" Foreground="{DynamicResource AlertRedBrush}" TextWrapping="Wrap"
+                                       Margin="0,6,0,0" Visibility="{Binding SelectedField.Error, Converter={StaticResource NullToVisibility}}" />
+                            <TextBlock x:Name="FilePathLine" Text="{Binding FilePathText}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11"
+                                       TextWrapping="Wrap" Margin="0,12,0,0" Visibility="{Binding FilePathText, Converter={StaticResource NullToVisibility}}" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- Przyciski i komunikat w jednej linii (szeroko); wąsko komunikat schodzi pod przyciski. -->
+        <Grid x:Name="FooterGrid" Grid.Row="2" Margin="0,8,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="FooterButtonsColumn" Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <WrapPanel x:Name="FooterButtons">
+                <Button Content="Zapisz i zastosuj" Command="{Binding SaveCommand}" Style="{StaticResource CompactAccentButton}" />
+                <Button Content="Odśwież" Command="{Binding RefreshCommand}" Style="{StaticResource CompactButton}" />
+                <Button Content="Przywróć timing z config.json" Command="{Binding ResetTimingCommand}" Style="{StaticResource CompactButton}" />
+                <Button Content="Przywróć nakładkę z config.json" Command="{Binding ResetOverlayCommand}" Style="{StaticResource CompactButton}" />
+            </WrapPanel>
+            <TextBlock x:Name="MessageText" Grid.Column="1" Text="{Binding Message}" TextWrapping="Wrap" VerticalAlignment="Center"
+                       Margin="4,0,0,4" Foreground="{DynamicResource TextPrimaryBrush}"
+                       Visibility="{Binding Message, Converter={StaticResource NullToVisibility}}" />
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,411 @@
+{
+  // Włącznik/wyłącznik całego programu — false wstrzymuje monitorowanie wszystkich maszyn (wyłącznik awaryjny).
+  "enabled": true,
+
+  // Nazwa pliku ze słownikiem błędów, w tym samym katalogu co ten plik.
+  "rulesFile": "rules.json",
+
+  // Lista monitorowanych maszyn. Dopisanie nowej maszyny = kolejny wpis tutaj (id, name, host, port, profile),
+  // bez zmian w programie. "profile" musi wskazywać jeden z kluczy sekcji "profiles" poniżej.
+  "machines": [
+    { "id": "aidite1", "name": "Aidite 1", "host": "192.168.1.108", "port": 9100, "profile": "opencnc" },
+    { "id": "aidite2", "name": "Aidite 2", "host": "192.168.1.105", "port": 9100, "profile": "opencnc" },
+    { "id": "aidite3", "name": "Aidite 3", "host": "192.168.1.107", "port": 9100, "profile": "opencnc" },
+    { "id": "aidite4", "name": "Aidite 4", "host": "192.168.1.106", "port": 9100, "profile": "opencnc" },
+    { "id": "aidite5", "name": "Aidite 5", "host": "192.168.1.109", "port": 9100, "profile": "opencnc" },
+    { "id": "aidite6", "name": "Aidite 6", "host": "192.168.1.103", "port": 9100, "profile": "opencnc" },
+    { "id": "aidite7", "name": "Aidite 7", "host": "192.168.1.104", "port": 9100, "profile": "opencnc" },
+    { "id": "amm520-1", "name": "520 (1)", "host": "192.168.1.101", "port": 5900, "profile": "aidite5x", "enabled": false, "requiresPassword": false, "comment": "HMI Aidite 5X; profil zmierzony na natywnych klatkach, alarm żółty lub czerwony" },
+    { "id": "amm520-2", "name": "520 (2)", "host": "192.168.1.102", "port": 5900, "profile": "aidite5x", "enabled": false, "requiresPassword": false, "comment": "HMI Aidite 5X; jak wyżej (to z tej maszyny pochodzi natywny zrzut awarii)" },
+    { "id": "amm580", "name": "580", "host": "192.168.1.110", "port": 5900, "profile": "amm580", "enabled": false, "comment": "RSA-AES (RA2_256) potwierdzone na maszynie; logowanie SAMYM hasłem VNC, bez nazwy użytkownika; profil ekranu zmierzony na natywnych klatkach" },
+    { "id": "premile", "name": "Premile", "host": "192.168.1.114", "port": 5900, "profile": "premile", "enabled": false, "requiresPassword": false, "comment": "HMI Aidite 4X V3.43 (Qt for Embedded Linux, RFB 3.3, None) — zmierzona tylko zakładka MANUAL" },
+    { "id": "cameo1", "name": "Cameo 1", "host": "192.168.1.111", "port": 5900, "profile": "cameo1", "enabled": false, "requiresPassword": false, "comment": "HMI Aidite V2.14 (Qt for Embedded Linux, RFB 3.3, None); wg zdjęcia maszyny to AMW-400 \"1 PREMILE BEZ RAMKI\" — zmierzona zakładka AUTO" }
+  ],
+
+  // Profile ekranu — opisują wygląd HMI (gdzie jest pasek błędu, jakie progi koloru czerwieni).
+  "profiles": {
+    "opencnc": {
+      "description": "WinCE / OpenCnc, jasny motyw, ramka komunikatu u góry po prawej (zmierzony na Aidite 1-7; NIE pasuje do 520 (1)/(2) z HMI Aidite 5X)",
+      "statusBarRoi": { "x": 423, "y": 40, "width": 543, "height": 66 },
+      "red": {
+        "hueMinDeg": 340,
+        "hueMaxDeg": 20,
+        "minSaturation": 0.55,
+        "minValue": 0.35
+      },
+      "minRedFraction": 0.005,
+      "ocrMarginPx": 20,
+      "ocrScale": 2,
+      "darkTheme": false,
+      "idle": {
+        "enabled": true,
+        "mode": "number",
+        "progressRoi": { "x": 689, "y": 422, "width": 190, "height": 32 },
+        // Od jakiego odczytanego procentu uznajemy pracę za skończoną — patrz IdleWatchProfile.FullAtPercent.
+        "fullAtPercent": 100,
+        // Powiększenie wycinka przed OCR — czcionka procentu bywa mała.
+        "ocrScale": 3,
+        "ocrMarginPx": 8
+      },
+      "mainScreen": {
+        "enabled": true,
+        "anchorLabels": [ ["Milling", "Status"], ["Milling", "Status:"], ["MillingStatus"] ],
+        "maxDistance": 2,
+        "retryScaled": true
+      }
+    },
+    "aidite5x": {
+      "description": "Aidite 5X V3.34 (520 (1), 520 (2)) — Qt for Embedded Linux VNC Server, RFB 3.3, RGB565; komunikat w dolnym pasku stanu, żółty lub czerwony",
+      "statusBarRoi": { "x": 35, "y": 709, "width": 954, "height": 48 },
+      "red": {
+        "hueMinDeg": 340,
+        "hueMaxDeg": 70,
+        "minSaturation": 0.55,
+        "minValue": 0.35
+      },
+      "minRedFraction": 0.02,
+      "ocrMarginPx": 20,
+      "ocrScale": 2,
+      "darkTheme": false,
+      "idle": {
+        "enabled": true,
+        "mode": "number",
+        "progressRoi": { "x": 540, "y": 402, "width": 365, "height": 28 },
+        "fullAtPercent": 100,
+        "ocrScale": 3,
+        "ocrMarginPx": 8
+      },
+      "mainScreen": {
+        "enabled": true,
+        "anchorLabels": [ ["Tool", "Leg"], ["Spi", "ndle"], ["Tool", "NO"], ["Spindle"], ["Progress"] ],
+        "maxDistance": 2,
+        "retryScaled": true,
+        "statusBarAlwaysVisible": true
+      }
+    },
+
+    "amm580": {
+      "description": "RealVNC Server (maszyna 580), ciemny motyw, ekran 800x600, pasek alarmu u góry",
+      "statusBarRoi": { "x": 150, "y": 0, "width": 460, "height": 32 },
+      "red": {
+        "hueMinDeg": 340,
+        "hueMaxDeg": 20,
+        "minSaturation": 0.55,
+        "minValue": 0.55
+      },
+      "minRedFraction": 0.005,
+      "ocrMarginPx": 20,
+      "ocrScale": 2,
+      "darkTheme": true,
+      "idle": {
+        "enabled": true,
+        "mode": "number",
+        "progressRoi": { "x": 420, "y": 246, "width": 370, "height": 30 },
+        "fullAtPercent": 100,
+        "ocrScale": 3,
+        "ocrMarginPx": 8,
+        "progressBar": {
+          "enabled": true,
+          "trackRoi": { "x": 422, "y": 277, "width": 350, "height": 10 },
+          "fill": { "hueMinDeg": 140, "hueMaxDeg": 215, "minSaturation": 0.55, "minValue": 0.35 },
+          "trackMaxSaturation": 0.10,
+          "trackMinValue": 0.40,
+          "surroundMaxValue": 0.35,
+          "surroundRows": 5,
+          "columnFillMinFraction": 0.5,
+          "columnsPerPercent": 3.54,
+          "columnsOffset": 2.5
+        }
+      },
+      "mainScreen": {
+        "enabled": true,
+        "anchorLabels": [ ["Progress:"], ["Progress"], ["BreakPoint"], ["Line", "Selection"] ],
+        "otherScreenLabels": [ ["Alarm", "Information"] ],
+        "maxDistance": 2,
+        "retryScaled": true,
+        "statusBarAlwaysVisible": true
+      },
+      "programState": {
+        "enabled": true,
+        "boxRoi": { "x": 1, "y": 2, "width": 160, "height": 29 },
+        "runFill": { "hueMinDeg": 100, "hueMaxDeg": 160, "minSaturation": 0.5, "minValue": 0.4 },
+        "runMinFraction": 0.5,
+        "abortWords": [ "abort" ],
+        "abortMaxDistance": 1,
+        "abortPattern": {
+          "x": 40,
+          "y": 9,
+          "whiteMinChannel": 150,
+          "maxMismatch": 20,
+          "maxShift": 1,
+          "rows": [
+            "...................................................................................",
+            "....................................................#..............................",
+            "..#...#####......#.......#####..............#.......#..............................",
+            "..#...#....#.....#.......#.................###......#.........................#....",
+            "..#...#.....#....#.......#.................#.#......#.........................#....",
+            "..#...#......#...#.......#......##...........#......#.###......####.....#.##.####..",
+            "..#...#......#...#.......#......##........#...#.....##...#....#....#....#.....#....",
+            "..#...#......#...#.......#####............#...#.....#.....#..#......#...#.....#....",
+            "..#...#......#...#.......#...............#....##....#.....#..#......#...#.....#....",
+            "..#...#......#...#.......#...............#######....#.....#..#......#...#.....#....",
+            "..#...#.....#....#.......#..............##.....##...#.....#..#......#...#.....#....",
+            "..#...#....#.....#.......#......##......#.......#...#....#....#....#....#.....#....",
+            "..#...#####......#####...#####..##......#.......#...#.###......####.....#......##..",
+            "..................................................................................."
+          ]
+        }
+      }
+    },
+    "aidite-light2": {
+      "description": "Jasny motyw, przyciski u góry (wstępny)",
+      "statusBarRoi": { "x": 0, "y": 0, "width": 1280, "height": 48 },
+      "red": {
+        "hueMinDeg": 340,
+        "hueMaxDeg": 20,
+        "minSaturation": 0.55,
+        "minValue": 0.35
+      },
+      "minRedFraction": 0.005,
+      "ocrMarginPx": 20,
+      "ocrScale": 2,
+      "darkTheme": false,
+      "idle": {
+        "enabled": true,
+        "mode": "number",
+        "progressRoi": { "x": 520, "y": 120, "width": 120, "height": 24 },
+        "fullAtPercent": 100,
+        "ocrScale": 3,
+        "ocrMarginPx": 8
+      }
+    },
+
+    "cameo1": {
+      "description": "Aidite V2.14 (Cameo 1, 192.168.1.111; wg zdjęcia AMW-400 \"1 PREMILE BEZ RAMKI\") — Qt for Embedded Linux VNC Server, RFB 3.3, RGB565; układ jak 520, pasek stanu u dołu; wygląd alarmu niezmierzony",
+      "statusBarRoi": { "x": 35, "y": 709, "width": 954, "height": 48 },
+      "red": {
+        "hueMinDeg": 340,
+        "hueMaxDeg": 70,
+        "minSaturation": 0.55,
+        "minValue": 0.35
+      },
+      "minRedFraction": 0.02,
+      "ocrMarginPx": 20,
+      "ocrScale": 2,
+      "darkTheme": false,
+      "idle": {
+        "enabled": true,
+        "mode": "number",
+        "progressRoi": { "x": 540, "y": 402, "width": 365, "height": 28 },
+        "fullAtPercent": 100,
+        "ocrScale": 3,
+        "ocrMarginPx": 8
+      },
+      "mainScreen": {
+        "enabled": true,
+        "anchorLabels": [ ["Tool", "Leg"], ["Spi", "ndle"], ["Tool", "NO"], ["Spindle"], ["Progress"] ],
+        "maxDistance": 2,
+        "retryScaled": true,
+        "statusBarAlwaysVisible": true
+      }
+    },
+    "premile": {
+      "description": "Aidite 4X V3.43 (Premile, 192.168.1.114) — Qt for Embedded Linux VNC Server, RFB 3.3, RGB565; ramka ekranu jak 520; zakładka AUTO i wygląd alarmu niezmierzone",
+      "statusBarRoi": { "x": 35, "y": 709, "width": 954, "height": 48 },
+      "red": {
+        "hueMinDeg": 340,
+        "hueMaxDeg": 70,
+        "minSaturation": 0.55,
+        "minValue": 0.35
+      },
+      "minRedFraction": 0.02,
+      "ocrMarginPx": 20,
+      "ocrScale": 2,
+      "darkTheme": false,
+      "idle": {
+        "enabled": true,
+        "mode": "number",
+        "progressRoi": { "x": 540, "y": 402, "width": 365, "height": 28 },
+        "fullAtPercent": 100,
+        "ocrScale": 3,
+        "ocrMarginPx": 8
+      },
+      "mainScreen": {
+        "enabled": true,
+        "anchorLabels": [ ["Tool", "Leg"], ["Spi", "ndle"], ["Tool", "NO"], ["Spindle"], ["Progress"] ],
+        "maxDistance": 2,
+        "retryScaled": true,
+        "statusBarAlwaysVisible": true
+      }
+    }
+  },
+
+  // Komunikacja między komputerami operatorów (UDP broadcast w sieci lokalnej, pakiety podpisane HMAC).
+  "cluster": {
+    "enabled": false,
+    "udpPort": 47777,
+    "priority": 100,
+    "heartbeatIntervalMs": 1000,
+    "stateIntervalMs": 1000,
+    "peerTimeoutMs": 15000,
+    "takeoverDelayMs": 20000,
+    "clockSkewToleranceSec": 300,
+    "sleepJumpThresholdMs": 5000,
+    // Bieżące postoje replikują się na żywo co sekundę; te dwa ustawienia dotyczą WYŁĄCZNIE uzupełniania
+    // luk sprzed włączenia tego komputera. Odstęp między kolejnymi pytaniami do tego samego komputera,
+    // gdy raz już odpowiedział (po starcie i po restarcie partnera pytamy od razu):
+    "downtimeSyncIntervalMs": 600000,
+    // Jak daleko wstecz wolno prosić o postoje (dni). Komputer wyłączony dłużej NIE dostanie starszych
+    // epizodów — jego raport zaczyna się od tej granicy.
+    "downtimeSyncWindowDays": 90,
+    // Opcjonalna lista adresów (unicast) komputerów spoza zasięgu rozgłoszenia (np. inna podsieć). Zwykle pusta.
+    "peers": []
+  },
+
+  // Odstępy czasowe pętli obserwatora i cyklu życia alertów (wartości w milisekundach, chyba że podpisano inaczej).
+  "timing": {
+    "pollIntervalMs": 1000,
+    "fullFrameIntervalMs": 60000,
+    "pollingModeIntervalMs": 5000,
+    "episodeCloseAfterMs": 30000,
+    // Po ilu ms CIĄGŁEGO braku czerwieni kolejny czerwony komunikat o innej treści jest NOWYM błędem (nowy
+    // alert z dźwiękiem, np. "Request home alarm" po restarcie). Krótsze przerwy (HMI na chwilę gasi okienko
+    // między komunikatami wyświetlanymi w pętli) nie przerywają epizodu — kilka błędów naraz = jeden alert.
+    "episodeBreakAfterMs": 10000,
+    "sameMessageRejoinMs": 120000,
+    // Po kliknięciu "Idę sprawdzić" dźwięk milknie; gdy błąd nadal jest na ekranie po tym czasie, alert
+    // dzwoni ponownie (0 = wyłączone: po zamknięciu z aplikacji już nie dzwoni w tym epizodzie).
+    "escalationAfterAckMs": 240000,
+    "alertSoundRepeatMs": 60000,
+    "offlineAlertAfterMs": 180000,
+    "offlineAlertSound": false,
+    "reconnectBackoffMs": [2000, 5000, 15000, 30000],
+    "connectTimeoutMs": 10000,
+    // Twardy limit czasu na pojedynczy odczyt z gniazda VNC — chroni przed zerwanym/zawieszonym
+    // połączeniem. W normalnej pracy rzadko trafiany, bo żądania przyrostowe na niezmienionym ekranie
+    // obsługuje niżej "idleUpdateTimeoutMs" (nie ten limit).
+    "readTimeoutMs": 30000,
+    // Jak długo czekać na odpowiedź serwera VNC na żądanie PRZYROSTOWE, zanim uznamy "brak zmian" i
+    // przejdziemy dalej BEZ zamykania połączenia. Serwery WinCE/OpenCnc na nieruchomym ekranie potrafią
+    // nie odpowiadać wcale, dopóki coś się nie zmieni — bez tego limitu obserwator czekałby do
+    // "readTimeoutMs" i błędnie rozpoznawał to jako utratę łączności z maszyną.
+    "idleUpdateTimeoutMs": 1000,
+    "ocrMaxAttempts": 3,
+    // Minimalny odstęp między kolejnymi próbami OCR w RAMACH JEDNEGO EPIZODU, wywołanymi zmianą treści
+    // paska statusu (okienko HMI cyklicznie pokazuje po kolei kilka różnych komunikatów tego samego
+    // błędu — patrz "priority" w rules.json) — działa NIEZALEŻNIE od "ocrMaxAttempts" powyżej, ale nie
+    // dławi silnika OCR przy migotaniu ekranu.
+    "ocrRetryIntervalMs": 2000,
+    "ackMemoryHours": 2,
+    // Ile ms maszyna musi nieprzerwanie pokazywać pasek postępu na 100% (idle.fullAtFraction), zanim
+    // uznamy ją za "stojącą bez pracy" i podniesiemy alert — patrz sekcja "idle" profili wyżej. Maszyna
+    // normalnie stoi na 100% ok. 1 minutę między zakończeniem jednej pracy a startem kolejnej (gdy jest
+    // zaplanowana), więc 2 minuty to zapas, który nie dzwoni fałszywie przy zwykłej zmianie pracy.
+    "idleAlertAfterMs": 120000,
+    "idleAtZeroAfterMs": 180000,
+    // Ile sekund jest widoczny pop-up "MASZYNA STOI BEZ PRACY — dołóż prace", zanim sam się schowa
+    // (chyba że operator go "przypiął" z menu zasobnika). 0 = NIE chowa się sam i czeka na "✕ Skasuj"
+    // Zakres 0..60.
+    "idlePopupSeconds": 0,
+    // Powiadomienie "włącz okno podglądu stanu maszyny" (sekcja "mainScreen" profilu wyżej):
+    // co ile ms sprawdzać ekran (OCR pełnej klatki — nie co sekundę); zmiana obrazu w pasie etykiet
+    // kotwiczących i tak wymusza wcześniejszy odczyt, więc przełączenie zakładki HMI widać przed upływem
+    // tego odstępu, ...
+    "mainScreenCheckIntervalMs": 10000,
+    // ... jak długo czekać na wynik OCR pełnej klatki, zanim uznamy trwający odczyt za przeterminowany
+    "mainScreenOcrGraceMs": 15000,
+    "wrongScreenAlertAfterMs": 0,
+    // ... czy pop-up ma odtworzyć dźwięk (raz, przy pojawieniu się; domyślnie nie — to przypomnienie,
+    // nie awaria), ...
+    "wrongScreenAlertSound": false,
+    "wrongScreenRemindAfterMs": 240000
+  },
+
+  // Odczyt tekstu błędu (OCR) — służy tylko do opisu; wykrywanie samego błędu opiera się na kolorze, nie na tekście.
+  "ocr": {
+    "language": "en-US",
+    "engine": "windows"
+  },
+
+  // Ścieżki plików danych aplikacji. Ścieżki względne liczone są względem katalogu danych programu.
+  // Katalog "captures" jest czyszczony przy starcie programu i potem co 10 minut: najpierw pliki starsze
+  // niż "captureRetentionDays", potem — dopóki katalog przekracza "capturesMaxMegabytes" — najstarsze
+  // pozostałe. Dzięki temu katalog zrzutów nie przekroczy podanego limitu miejsca nawet w nietypowym dniu
+  // (np. przy migoczącym pasku statusu HMI). Zrzut wskazywany przez OTWARTY alert nie jest usuwany, żeby
+  // przycisk "Pokaż zrzut" miał co pokazać.
+  "paths": {
+    "logsDir": "logs",
+    "capturesDir": "captures",
+    "testScreensDir": "test-ekran",
+    "historyFile": "history.csv",
+    "logRetentionDays": 14,
+    "captureRetentionDays": 3,
+    // Twardy limit miejsca na katalog zrzutów w MB (zakres 20–5000).
+    "capturesMaxMegabytes": 200
+  },
+
+  "ui": {
+    // Przezroczystość okna alertu, gdy kursor NIE jest nad oknem (pełna nieprzezroczystość po najechaniu
+    // myszą). Dozwolony zakres 0,2–1,0 — dźwięk pozostaje głównym nośnikiem alarmu, okno jest dodatkowym,
+    // mniej natarczywym sygnałem, żeby nie zasłaniało pracy operatora.
+    "alertOpacity": 0.7,
+    "windowsNotificationsEnabled": true,
+    // Nakładka statusu maszyn — wąski pasek kafelków nad innymi oknami (jak nakładka Discorda). Kafelek
+    // pokazuje nazwę maszyny, symbol, krótki stan i procent pracy; te same teksty i kolory co karty
+    // w Podglądzie. "enabled" to stan początkowy: operator włącza i wyłącza nakładkę z menu zasobnika
+    // ("Nakładka statusu"), a jego wybór — razem z przeciągniętym położeniem — zapisuje się w profilu
+    // użytkownika (%LocalAppData%\MaszynyAlert\overlay.json), nie tutaj.
+    "overlay": {
+      "enabled": true,
+      // Przezroczystość nakładki, gdy kursor NIE jest nad nią (0,2–1,0); po najechaniu myszą pełna.
+      "opacity": 0.55,
+      // Róg ekranu przy pierwszym uruchomieniu: "top-left", "top-right", "bottom-left", "bottom-right".
+      "position": "top-left",
+      // Powiększenie kafelków (0,6–2,0) — dla ekranu 4K albo patrzenia z dystansu.
+      "scale": 1.0,
+      // Układ kafelków: "one-row" (jeden poziomy wiersz, domyślnie), "two-rows"
+      // (dwa wiersze jeden nad drugim, np. 2 × 3 przy sześciu maszynach), "one-column" (słupek pionowy),
+      // "two-columns", "three-columns" (siatka, kafelki idą wierszami). Operator może wybrać inny układ
+      // z menu zasobnika ("Nakładka statusu" → "Układ kafelków") albo przyciskiem "⊞" pod uchwytem na samej
+      // nakładce (schowany przy przenikaniu kliknięć) — jego wybór obowiązuje, dopóki ta wartość się nie zmieni.
+      "layout": "one-row",
+      // Przepuszczanie kliknięć "na wylot". Domyślnie false: kliknięcie kafelka otwiera Podgląd na tej
+      // maszynie. Po włączeniu nakładki nie da się już ani kliknąć, ani przeciągnąć.
+      "clickThrough": false
+    }
+  },
+
+  // Materiał diagnostyczny zbierany "na zapas" — program nigdy go nie czyta z powrotem; służy przyciskowi
+  // "Pokaż zrzut" przy alercie i paczce diagnostycznej dla programisty.
+  "diagnostics": {
+    // Zrzut "przerwa" (pierwsza klatka bez czerwieni w trwającym epizodzie) oraz pełne, NIEPOMNIEJSZONE
+    // klatki "ekran". Domyślnie wyłączone: po połączeniu epizodów tego samego komunikatu zrzut "przerwa"
+    // służy już wyłącznie badaniu migotania paska statusu i to on zapełniał dysk. Włączać świadomie, na
+    // czas diagnozy, i wyłączyć po zebraniu materiału.
+    "captureBreaks": false
+  },
+
+  // Program raz na "checkIntervalMinutes" czyta spis wydań (INDEX.md) z katalogu "url"; nową wersję pokazuje
+  // w oknie "Aktualizacja VNC Alert". Instaluje dopiero po zgodzie człowieka — kliknięcie na jednym komputerze
+  // grupy wystarcza wszystkim (zgoda jedzie wspólną konfiguracją), a pobrany plik jest sprawdzany sumą SHA-256
+  // ze spisu. Instalacja automatyczna czeka na koniec alarmu i wymaga potwierdzenia okna Windows (UAC).
+  // Wersja portable (bez instalacji) nie aktualizuje się nigdy.
+  "updates": {
+    // false = bez sprawdzania i bez instalacji (aktualizacja tylko ręcznie, plikiem Setup).
+    "enabled": true,
+    // Katalog wydań projektu (końcowy "/" opcjonalny). Tylko https:// (http:// wyłącznie dla localhost/127.0.0.1).
+    // Katalog jest za logowaniem Cloudflare Access: bez tokenu usługi serwer odpowiada przekierowaniem na
+    // logowanie Google, a program pokazuje "katalog wydań wymaga logowania" — monitoring działa dalej normalnie.
+    "url": "https://wydania.mbuas.pl/maszyny-alert/",
+    // Co ile minut sprawdzać katalog (5–1440).
+    "checkIntervalMinutes": 60,
+    // Identyfikator tokenu usługi Cloudflare Access (nagłówek CF-Access-Client-Id, np. "….access") albo null.
+    // Token tworzy administrator w Zero Trust (Access → Service Auth) i dodaje go do polityki aplikacji
+    // "wydania". Identyfikator jest jawny; SEKRET tokenu NIE wpisuj tutaj — wpisuje się go w Panel →
+    // Ustawienia → Ten komputer i trafia do zaszyfrowanego magazynu sekretów stanowiska.
+    "accessClientId": null,
+    // true = ten komputer instaluje sam wersję zatwierdzoną na innym komputerze grupy (po zakończeniu
+    // alarmu); false = tylko pokazuje okno z przyciskiem "Zainstaluj".
+    "autoInstallWhenApproved": true
+  }
+}

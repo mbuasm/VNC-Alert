@@ -1,0 +1,136 @@
+<UserControl x:Class="MaszynyAlert.App.Views.DowntimeView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:charts="clr-namespace:MaszynyAlert.App.Views.Charts">
+ <UserControl.Resources>
+  <!-- Pędzle wykresów z motywu (DynamicResource): przełączenie jasny/ciemny rysuje wykres od nowa. -->
+  <Style TargetType="{x:Type charts:BarChartView}">
+   <Setter Property="TextBrush" Value="{DynamicResource TextPrimaryBrush}"/><Setter Property="MutedBrush" Value="{DynamicResource TextSecondaryBrush}"/>
+   <Setter Property="GridBrush" Value="{DynamicResource DividerBrush}"/><Setter Property="SurfaceBrush" Value="{DynamicResource CardBackgroundBrush}"/>
+  </Style>
+  <Style TargetType="{x:Type charts:PieChartView}">
+   <Setter Property="TextBrush" Value="{DynamicResource TextPrimaryBrush}"/><Setter Property="MutedBrush" Value="{DynamicResource TextSecondaryBrush}"/>
+   <Setter Property="GridBrush" Value="{DynamicResource DividerBrush}"/><Setter Property="SurfaceBrush" Value="{DynamicResource CardBackgroundBrush}"/>
+  </Style>
+  <Style TargetType="{x:Type charts:LineChartView}">
+   <Setter Property="TextBrush" Value="{DynamicResource TextPrimaryBrush}"/><Setter Property="MutedBrush" Value="{DynamicResource TextSecondaryBrush}"/>
+   <Setter Property="GridBrush" Value="{DynamicResource DividerBrush}"/><Setter Property="SurfaceBrush" Value="{DynamicResource CardBackgroundBrush}"/>
+  </Style>
+ </UserControl.Resources>
+ <ScrollViewer VerticalScrollBarVisibility="Auto">
+  <StackPanel Margin="24">
+   <TextBlock Text="Raport postojów" FontSize="28" FontWeight="SemiBold"/>
+   <TextBlock Text="Wszystkie postoje maszyn, niezależnie od przyczyny i czasu trwania: czerwone alerty błędu oraz postoje bez błędu („Stoi bez pracy (100 %)”, „Stoi na 0 %”), bez weekendu (od soboty 06:00 do poniedziałku 06:00). Dłuższe niż godzina są oznaczone jako „długi postój (> 1 h)”." Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,6,0,16"/>
+   <!-- Dwa stałe bloki zakresu raportu; kod przełącza wyłącznie Visibility samej ramki.
+        Same napisy NIE mają x:Name: żadna ścieżka wykonania nie może ich nadpisać ani ukryć,
+        a dokładnie jeden z bloków jest zawsze widoczny. -->
+   <Border x:Name="LocalScopeBox" Style="{StaticResource CardStyle}" Background="{DynamicResource WarningSoftBackgroundBrush}" BorderBrush="{DynamicResource WarningSoftBorderBrush}" Padding="16" Margin="0,0,0,20">
+    <StackPanel>
+     <TextBlock Text="Dane lokalne tego komputera" FontSize="17" FontWeight="SemiBold" Foreground="{DynamicResource WarningTextBrush}"/>
+     <TextBlock Text="Raport pokazuje wyłącznie postoje zarejestrowane wtedy, gdy ten komputer obserwował maszyny. Czas, gdy program był wyłączony albo nie obserwował danej maszyny, nie jest tu widoczny. To nie jest pełna historia postojów całej grupy komputerów ani całej hali." Foreground="{DynamicResource WarningTextBrush}" TextWrapping="Wrap" Margin="0,8,0,0" LineHeight="21"/>
+    </StackPanel>
+   </Border>
+   <Border x:Name="GroupScopeBox" Style="{StaticResource CardStyle}" Background="{DynamicResource WarningSoftBackgroundBrush}" BorderBrush="{DynamicResource WarningSoftBorderBrush}" Padding="16" Margin="0,0,0,20" Visibility="Collapsed">
+    <StackPanel>
+     <TextBlock Text="Dane grupy komputerów" FontSize="17" FontWeight="SemiBold" Foreground="{DynamicResource WarningTextBrush}"/>
+     <TextBlock Text="Raport pokazuje postoje obserwowane przez wszystkie komputery grupy, także te, które ten komputer przegapił, bo był wyłączony. Nadal jest to suma obserwacji: czas, gdy żaden komputer grupy nie obserwował maszyn, nie jest tu widoczny, a komputer wyłączony bardzo długo nie dostanie najstarszych epizodów. To nie jest pełna historia postojów całej hali." Foreground="{DynamicResource WarningTextBrush}" TextWrapping="Wrap" Margin="0,8,0,0" LineHeight="21"/>
+     <!-- Jedyna zmienna część bloku: nazwa grupy i czas ostatniego uzupełnienia od każdego komputera. -->
+     <TextBlock x:Name="GroupScopeSources" Foreground="{DynamicResource WarningTextBrush}" TextWrapping="Wrap" Margin="0,10,0,0" LineHeight="21"/>
+    </StackPanel>
+   </Border>
+   <WrapPanel Margin="0,0,0,18">
+    <StackPanel Margin="0,0,16,0"><TextBlock Text="Od dnia zmiany" Margin="0,0,0,6"/><DatePicker x:Name="FromDate" Width="150" SelectedDateChanged="Filter_Changed"/></StackPanel>
+    <StackPanel Margin="0,0,16,0"><TextBlock Text="Do dnia zmiany" Margin="0,0,0,6"/><DatePicker x:Name="ToDate" Width="150" SelectedDateChanged="Filter_Changed"/></StackPanel>
+    <StackPanel Margin="0,0,16,0"><TextBlock Text="Zmiana" Margin="0,0,0,6"/><ComboBox x:Name="ShiftFilter" Width="165" SelectionChanged="Filter_Changed" SelectedIndex="0">
+      <ComboBoxItem Content="Wszystkie zmiany"/><ComboBoxItem Content="06:00–14:00"/><ComboBoxItem Content="14:00–22:00"/><ComboBoxItem Content="22:00–06:00"/>
+    </ComboBox></StackPanel>
+    <Button Content="Cała historia" Click="All_Click" VerticalAlignment="Bottom" Margin="0,0,12,0"/>
+    <Button x:Name="ExportButton" Content="Eksportuj lokalny raport CSV" Click="Export_Click" VerticalAlignment="Bottom" Margin="0,0,12,0"/>
+    <Button x:Name="PdfButton" Content="Zapisz PDF" Click="Pdf_Click" VerticalAlignment="Bottom" Margin="0,0,12,0"/>
+    <Button x:Name="ExcelButton" Content="Zapisz Excel" Click="Excel_Click" VerticalAlignment="Bottom"/>
+   </WrapPanel>
+   <UniformGrid Columns="3" Margin="0,0,0,22">
+    <Border Style="{StaticResource CardStyle}" Background="{DynamicResource OkSoftBackgroundBrush}" Margin="0,0,12,0"><StackPanel><TextBlock Text="Łączny czas"/><TextBlock x:Name="TotalTime" FontSize="28" FontWeight="SemiBold" Margin="0,12,0,0"/><TextBlock Text="Suma czasu wszystkich maszyn, z długimi postojami" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,6,0,0"/><TextBlock x:Name="TotalTimeWithoutLong" TextWrapping="Wrap" Margin="0,6,0,0"/><TextBlock x:Name="TotalTimeByKind" TextWrapping="Wrap" Margin="0,4,0,0"/></StackPanel></Border>
+    <Border Style="{StaticResource CardStyle}" Margin="0,0,12,0"><StackPanel><TextBlock Text="Minuty postoju"/><TextBlock x:Name="TotalMinutes" FontSize="28" FontWeight="SemiBold" Margin="0,12,0,0"/><TextBlock Text="Dla wybranego okresu i zmiany, z długimi postojami" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,6,0,0"/><TextBlock x:Name="TotalMinutesWithoutLong" TextWrapping="Wrap" Margin="0,6,0,0"/><TextBlock x:Name="TotalMinutesByKind" TextWrapping="Wrap" Margin="0,4,0,0"/></StackPanel></Border>
+    <Border Style="{StaticResource CardStyle}"><StackPanel><TextBlock Text="Liczba postojów"/><TextBlock x:Name="EpisodeCount" FontSize="28" FontWeight="SemiBold" Margin="0,12,0,0"/><TextBlock Text="Wszystkie postoje (błędy maszyn i bez pracy)" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,6,0,0"/><TextBlock x:Name="EpisodeCountLong" TextWrapping="Wrap" Margin="0,6,0,0"/><TextBlock x:Name="EpisodeCountByKind" TextWrapping="Wrap" Margin="0,4,0,0"/></StackPanel></Border>
+   </UniformGrid>
+   <!-- Wyłącznie ostrzeżenia bieżące (błąd dziennika, zły zakres dat). Nie zastępuje informacji o lokalnym zakresie. -->
+   <Border x:Name="ReportWarningBox" Background="{DynamicResource WarningSoftBackgroundBrush}" BorderBrush="{DynamicResource WarningSoftBorderBrush}" BorderThickness="1" CornerRadius="10" Padding="14,10" Margin="0,0,0,12" Visibility="Collapsed">
+    <TextBlock x:Name="ReportWarning" Foreground="{DynamicResource WarningTextBrush}" TextWrapping="Wrap"/>
+   </Border>
+   <TextBlock Text="Dni i zmiany" FontSize="21" FontWeight="SemiBold" Margin="0,0,0,12"/>
+   <DataGrid x:Name="SummaryGrid" AutoGenerateColumns="False" EnableColumnVirtualization="False" EnableRowVirtualization="True" IsReadOnly="True" CanUserAddRows="False" MaxHeight="270" Margin="0,0,0,24">
+    <DataGrid.Columns>
+     <DataGridTextColumn Header="Dzień zmiany" Binding="{Binding Day}" Width="150"/>
+     <DataGridTextColumn Header="Zmiana" Binding="{Binding Shift}" Width="155"/>
+     <DataGridTextColumn Header="Minuty" Binding="{Binding Minutes, StringFormat=N1}" Width="105"/>
+     <DataGridTextColumn Header="Godziny" Binding="{Binding Hours, StringFormat=N2}" Width="105"/>
+     <DataGridTextColumn Header="W tym błędy maszyn [min]" Binding="{Binding ErrorMinutes, StringFormat=N1}" Width="165"/>
+     <DataGridTemplateColumn Header="Udział w raporcie" Width="*"><DataGridTemplateColumn.CellTemplate><DataTemplate>
+      <ProgressBar Value="{Binding Share, Mode=OneWay}" Maximum="100" Height="10" Margin="12,10" Foreground="{DynamicResource AccentBrush}" Background="{DynamicResource AccentSoftBrush}"/>
+     </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+    </DataGrid.Columns>
+   </DataGrid>
+   <TextBlock Text="Postoje maszyn" FontSize="21" FontWeight="SemiBold" Margin="0,0,0,12"/>
+   <TextBlock x:Name="EmptyText" Text="W lokalnych danych tego komputera nie ma postojów (czerwonych alertów ani postojów bez pracy) dla wybranego okresu i zmiany (weekend od soboty 06:00 do poniedziałku 06:00 nie wchodzi do raportu). Nie znaczy to, że postoju nie było: mógł wystąpić wtedy, gdy ten komputer nie obserwował maszyn, albo być zapisany na innym komputerze grupy." Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,0,0,12"/>
+   <DataGrid x:Name="EpisodesGrid" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" MaxHeight="350">
+    <DataGrid.Columns>
+     <DataGridTextColumn Header="Dzień zmiany" Binding="{Binding Day}" Width="125"/>
+     <DataGridTextColumn Header="Zmiana" Binding="{Binding Shift}" Width="125"/>
+     <DataGridTextColumn Header="Maszyna" Binding="{Binding Machine}" Width="100"/>
+     <DataGridTextColumn Header="Powód" Binding="{Binding Reason}" Width="240"/>
+     <DataGridTextColumn Header="Od" Binding="{Binding StartText}" Width="140"/>
+     <DataGridTextColumn Header="Do / ostatnia czerwień" Binding="{Binding EndText}" Width="165"/>
+     <DataGridTextColumn Header="Minuty" Binding="{Binding Minutes, StringFormat=N1}" Width="90"/>
+     <DataGridTextColumn Header="Stan" Binding="{Binding State}" Width="220"/>
+    </DataGrid.Columns>
+   </DataGrid>
+   <DockPanel Margin="0,28,0,6">
+    <CheckBox x:Name="IncludeIdleCharts" DockPanel.Dock="Right" Content="Pokaż postoje bez pracy na wykresach" IsChecked="True" VerticalAlignment="Center" Checked="IncludeIdleCharts_Changed" Unchecked="IncludeIdleCharts_Changed"/>
+    <TextBlock Text="Wykresy" FontSize="21" FontWeight="SemiBold"/>
+   </DockPanel>
+   <TextBlock x:Name="ChartsHeader" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,0,0,12"/>
+   <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+    <StackPanel>
+     <TextBlock x:Name="MachinesChartTitle" FontSize="17" FontWeight="SemiBold"/>
+     <TextBlock x:Name="MachinesChartSubtitle" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,4,0,10"/>
+     <charts:BarChartView x:Name="MachinesChart"/>
+     <TextBlock x:Name="NoDataText" TextWrapping="Wrap" Margin="0,12,0,0" LineHeight="20" Visibility="Collapsed"/>
+    </StackPanel>
+   </Border>
+   <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+    <StackPanel>
+     <TextBlock x:Name="KindsChartTitle" FontSize="17" FontWeight="SemiBold"/>
+     <TextBlock x:Name="KindsChartSubtitle" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,4,0,10"/>
+     <charts:PieChartView x:Name="KindsChart"/>
+    </StackPanel>
+   </Border>
+   <TextBlock Text="Błędy maszyn (bez postojów bez pracy)" FontSize="17" FontWeight="SemiBold" Margin="0,8,0,8"/>
+   <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+    <StackPanel>
+     <TextBlock x:Name="ErrorsChartTitle" FontSize="17" FontWeight="SemiBold"/>
+     <TextBlock x:Name="ErrorsChartSubtitle" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,4,0,10"/>
+     <charts:PieChartView x:Name="ErrorsChart"/>
+    </StackPanel>
+   </Border>
+   <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+    <StackPanel>
+     <TextBlock x:Name="ErrorMachinesChartTitle" FontSize="17" FontWeight="SemiBold"/>
+     <TextBlock x:Name="ErrorMachinesChartSubtitle" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,4,0,10"/>
+     <charts:BarChartView x:Name="ErrorMachinesChart"/>
+    </StackPanel>
+   </Border>
+   <Border Style="{StaticResource CardStyle}">
+    <StackPanel>
+     <DockPanel>
+      <CheckBox x:Name="LinePerMachine" DockPanel.Dock="Right" Content="Osobno dla każdej maszyny" VerticalAlignment="Center" Checked="LinePerMachine_Changed" Unchecked="LinePerMachine_Changed"/>
+      <TextBlock x:Name="DaysChartTitle" FontSize="17" FontWeight="SemiBold"/>
+     </DockPanel>
+     <TextBlock x:Name="DaysChartSubtitle" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,4,0,10"/>
+     <charts:LineChartView x:Name="DaysChart"/>
+     <TextBlock x:Name="DaysChartNote" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,8,0,0" Visibility="Collapsed"/>
+    </StackPanel>
+   </Border>
+   <TextBlock Text="Liczymy każdy zaobserwowany postój, bez względu na czas trwania: czerwony alert błędu („błąd maszyny”) albo postój bez pracy („Stoi bez pracy (100 %)”, „Stoi na 0 %”). Sumy i wykresy pokazują oba rodzaje razem i osobno; wykresy „Błędy maszyn” liczą tylko czerwone alerty. Gdy postój bez pracy nakłada się na błąd tej samej maszyny, ten czas liczy się jako błąd. Epizod dłuższy niż godzina też wchodzi do raportu, oznaczony w kolumnie Stan jako „długi postój (> 1 h)”; łączny czas, minuty i liczba postojów są podane z długimi postojami i bez nich. Weekend (od soboty 06:00 do poniedziałku 06:00) nie wchodzi do raportu: postój przechodzący przez granicę weekendu liczy się tylko do tej granicy, a ostatnia liczona zmiana tygodnia to piątek 22:00–06:00. Potwierdzenie alarmu nie kończy postoju. Nocna zmiana należy do dnia jej rozpoczęcia. Czas jest dzielony na granicach zmian; równoczesne postoje maszyn sumują się. Raport rozpoczyna się od wersji 0.2.0." TextWrapping="Wrap" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,20,0,0" LineHeight="21"/>
+  </StackPanel>
+ </ScrollViewer>
+</UserControl>

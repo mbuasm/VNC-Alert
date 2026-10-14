@@ -1,0 +1,511 @@
+{
+ "source": "520 bledy.pdf (skan, 6 stron; strona 6 pusta), od użytkownika 25.09.2026",
+ "transcribed": "przepis 1:1 z obrazów stron, literówki producenta zachowane",
+ "rows": [
+  {
+   "page": 1,
+   "code": "M24.0",
+   "content": "M code waiting",
+   "reason": "1. Forced pressure detection of pine knife in the process of automatic knife change: the external air pressure does not reach the pressure of pine knife. 2. Air pressure sensor fault",
+   "exclusion": "1. Check the external input air pressure. After the pressure reaches the required value, the machine will automatically continue to run without manual operation.2. Check the working state of the air pressure sensor",
+   "note": "reason item 2 ('2. Air pressure sensor fault') is a continuation row with empty code at the top of the second table on page 1; merged",
+   "rule": "aidite5x-m-code-waiting"
+  },
+  {
+   "page": 1,
+   "code": "MO20.00",
+   "content": "Alarm on the stroke over the knife instrument",
+   "reason": "1, the tool front end exposed length is too long; 2. Fof of instrument knife instrument",
+   "exclusion": "1. Reset the system, manually move the Z axis in the positive direction in manual mode, loosen the spindle clamlet and replace the tool. 2. Enter the parameter mode. In IO monitoring, manually press the instrument to see whether the induction signal of the instrument is normal. If abnormal, replace the instrument",
+   "rule": "aidite5x-tool-setter-stroke"
+  },
+  {
+   "page": 1,
+   "code": "MO20.01",
+   "content": "In the automatic measurement, an excessive X-axis load is detected",
+   "reason": "Automatic measurement signal is abnormal",
+   "exclusion": "Check for the automatically corrected probe signal",
+   "rule": "aidite5x-measurement-axis-load"
+  },
+  {
+   "page": 1,
+   "code": "MO20.02",
+   "content": "In the automatic measurement, an excessive Y-axis load is detected",
+   "reason": "Automatic measurement signal is abnormal",
+   "exclusion": "Check for the automatically corrected probe signal",
+   "rule": "aidite5x-measurement-axis-load"
+  },
+  {
+   "page": 1,
+   "code": "MO20.03",
+   "content": "In automatic measurement, excessive load of Z axis is detected",
+   "reason": "Automatic measurement signal is abnormal",
+   "exclusion": "Check for the automatically corrected probe signal",
+   "rule": "aidite5x-measurement-axis-load"
+  },
+  {
+   "page": 1,
+   "code": "MO20.04",
+   "content": "In the automatic measurement, an excessive A-axis load is detected",
+   "reason": "Automatic measurement signal is abnormal",
+   "exclusion": "Check for the automatically corrected probe signal",
+   "rule": "aidite5x-measurement-axis-load"
+  },
+  {
+   "page": 1,
+   "code": "MO20.05",
+   "content": "In automatic measurement, B axis is detected",
+   "reason": "Automatic measurement signal is abnormal",
+   "exclusion": "Check for the automatically corrected probe signal",
+   "rule": "aidite5x-measurement-axis-load"
+  },
+  {
+   "page": 1,
+   "code": "MO20.06",
+   "content": "In automatic measurement, B axis is detected",
+   "reason": "Back to zero, excessive B axis load is detected",
+   "exclusion": ", Reset the system, the manual interface JOG move the + B axis to the horizontal position, and then back to zero",
+   "rule": "aidite5x-measurement-axis-load"
+  },
+  {
+   "page": 1,
+   "code": "MO21.00",
+   "content": "Without the external air pressure, the machine forces the stop of operation",
+   "reason": "Without the external air pressure input, the machine is forced to stop working to protect the air-cooled spindle",
+   "exclusion": "Check whether the air compressor or air pressure line is abnormal",
+   "rule": "aidite5x-air-pressure"
+  },
+  {
+   "page": 1,
+   "code": "MO21.01",
+   "content": "Spindle inverter alarm",
+   "reason": "Spindle inverter failure",
+   "exclusion": "First, turn off the machine, boot again in 20 seconds, enter the manual screen, and rotate the spindle. If the alarm is not cleared, open the back cover, check the fault code of the frequency converter to take a picture and send it to the manufacturer",
+   "rule": "aidite5x-spindle-inverter"
+  },
+  {
+   "page": 1,
+   "code": "MO21.02",
+   "content": "During the spindle rotation, prohibit the clip",
+   "reason": "The spindle is rotating and prohibit opening the stylet",
+   "exclusion": "Check whether the clamlet is released during the spindle rotation",
+   "note": "duplicate code in source",
+   "rule": "aidite5x-clamp-spindle"
+  },
+  {
+   "page": 1,
+   "code": "MO21.02",
+   "content": "The clip is let open to rotate the spindle",
+   "reason": "The clamlet is loosened and does not rotate the spindle",
+   "exclusion": "Check for spindle rotation when the clamlet is released",
+   "note": "duplicate code in source",
+   "rule": "aidite5x-clamp-spindle"
+  },
+  {
+   "page": 2,
+   "code": "MO23.00",
+   "content": "The knife is triggered when it is enabled",
+   "reason": "Fault on the knife instrument signal",
+   "exclusion": "Replace the knife instrument",
+   "rule": "aidite5x-tool-setter-triggered"
+  },
+  {
+   "page": 2,
+   "code": "MO23.01",
+   "content": "The security door is not closed and the processing has been suspended. Please close the security door and click the start button to continue the processing",
+   "reason": "1. The security door is not closed. 2, the security door lock switch failure",
+   "exclusion": "1. Close the safety door 2. replace the security door lock",
+   "rule": "aidite5x-door"
+  },
+  {
+   "page": 2,
+   "code": "MO23.02",
+   "content": "Cutting fluid is abnormal, processing has been suspended, add cutting fluid, and then click the start button to continue processing",
+   "reason": "Cut fluid abnormal warning",
+   "exclusion": "Abnormal position of the cutting fluid water tank",
+   "rule": "aidite5x-milling-fluid"
+  },
+  {
+   "page": 2,
+   "code": "MO23.03",
+   "content": "Cutting fluid flow is abnormal, please reset the system, and then check the water tank liquid level and water pump!",
+   "reason": "Cutting fluid flow warning",
+   "exclusion": "Check the cutting fluid level and the water pump, and check whether the cutting fluid water tank is cleaned",
+   "rule": "aidite5x-milling-fluid-flow"
+  },
+  {
+   "page": 2,
+   "code": "MO23.04",
+   "content": "T1 life arrives, replace the T1 tool",
+   "reason": "The T1 tool life reaches the warning",
+   "exclusion": "Change a new T1 tool, the tool life management interface to reset the tool.",
+   "rule": "aidite5x-tool-life"
+  },
+  {
+   "page": 2,
+   "code": "MO23.05",
+   "content": "When the T2 life arrives, please replace the T2 tool",
+   "reason": "The T2 tool life reaches the warning",
+   "exclusion": "Change a new T2 tool, the tool life management interface to reset the tool.",
+   "rule": "aidite5x-tool-life"
+  },
+  {
+   "page": 2,
+   "code": "MO23.06",
+   "content": "When the T3 life arrives, please replace the T3 tool",
+   "reason": "The T3 tool life reaches the warning",
+   "exclusion": "Replace a new T3 tool, the tool life management interface to reset the tool.",
+   "rule": "aidite5x-tool-life"
+  },
+  {
+   "page": 2,
+   "code": "MO23.07",
+   "content": "When the T4 life arrives, please replace the T4 tool",
+   "reason": "The T4 tool life reaches the warning",
+   "exclusion": "Replace a new T4 tool, the tool life management interface to reset the tool.",
+   "rule": "aidite5x-tool-life"
+  },
+  {
+   "page": 2,
+   "code": "MO23.08",
+   "content": "When the T5 life arrives, please replace the T5 tool",
+   "reason": "The T5 tool life reaches the warning",
+   "exclusion": "Replace a new T5 tool, the tool life management interface to reset the tool.",
+   "rule": "aidite5x-tool-life"
+  },
+  {
+   "page": 2,
+   "code": "MO23.09",
+   "content": "When the T6 life arrives, please replace the T6 tool",
+   "reason": "The T6 tool life reaches the warning",
+   "exclusion": "Replace a new T6 tool, the tool life management interface to reset the tool.",
+   "rule": "aidite5x-tool-life"
+  },
+  {
+   "page": 2,
+   "code": "MO23.10",
+   "content": "When the T7 life arrives, please replace the T7 tool",
+   "reason": "The T7 tool life reaches the warning",
+   "exclusion": "Change a new T7 tool, the tool life management interface to reset the tool.",
+   "rule": "aidite5x-tool-life"
+  },
+  {
+   "page": 2,
+   "code": "MO23.11",
+   "content": "When the T8 life arrives, please replace the T8 tool",
+   "reason": "The T8 tool life reaches the warning",
+   "exclusion": "Replace a new T8 tool, tool life management interface to reset the tool.",
+   "rule": "aidite5x-tool-life"
+  },
+  {
+   "page": 2,
+   "code": "MO23.12",
+   "content": "Please clean and maintain the machine",
+   "reason": "Cleaning and maintenance machine warning warning",
+   "exclusion": "After the cleaning cycle set by the user (default 72 hours) arrives, there will be cleaning and maintenance tips after the machine is returned to zero. Please clean the machine and reset the machine to restart the cleaning cycle.",
+   "rule": "aidite5x-maint-clean"
+  },
+  {
+   "page": 2,
+   "code": "MO23.13",
+   "content": "When the T9 life arrives, please replace the T7 tool",
+   "reason": "The T9 tool life reaches the warning",
+   "exclusion": "Replacing a new T9 tool, the tool life management interface to reset the tool.",
+   "note": "source typo kept: content says 'T7' although the row is about T9",
+   "rule": "aidite5x-tool-life"
+  },
+  {
+   "page": 2,
+   "code": "MO23.14",
+   "content": "When the T10 life arrives, please replace the T8 tool",
+   "reason": "The T10 tool life reaches the warning",
+   "exclusion": "Change the new T10 tool, the tool life management interface to reset the tool.",
+   "note": "row continues onto page 3 (empty-code continuation row merged); source typo kept: content says 'T8' although the row is about T10",
+   "rule": "aidite5x-tool-life"
+  },
+  {
+   "page": 3,
+   "code": "MO24.00",
+   "content": "Insufficient external air pressure pressure",
+   "reason": "Insufficient external air pressure input pressure",
+   "exclusion": "Check whether the air compressor or air pressure line is abnormal",
+   "rule": "aidite5x-air-pressure"
+  },
+  {
+   "page": 3,
+   "code": "MO24.01",
+   "content": "Before using the machine, clean the bin and knife bank, check the pressure and ensure no oil and water, clean the vacuum cleaner and start the vacuum cleaner",
+   "reason": "Cleaning and maintenance machine warning warning",
+   "exclusion": "The cleaning machine cycle set by the user (by default, every time the boot is prompted), and the dialog box will pop up, which will automatically disappear after 12 minutes.",
+   "rule": "aidite5x-before-using"
+  },
+  {
+   "page": 3,
+   "code": "MO24.02",
+   "content": "Maintenance spindle",
+   "reason": "Cleaning and maintenance machine warning warning",
+   "exclusion": "The spindle maintenance period set by the user (30 days), and the dialog box will pop up, which will automatically disappear after 12 minutes.",
+   "rule": "aidite5x-maint-spindle"
+  },
+  {
+   "page": 3,
+   "code": "MO24.03",
+   "content": "Clean the wire rod guide rail and add lubricating oil",
+   "reason": "Cleaning and maintenance machine warning warning",
+   "exclusion": "The maintenance period of the wire rod set by the user (15 days), and the dialog box will pop up to open the opportunity, which will automatically disappear after 12 minutes.",
+   "rule": "aidite5x-maint-guide-rail"
+  },
+  {
+   "page": 3,
+   "code": "MO24.04",
+   "content": "Calibrate the machine",
+   "reason": "Cleaning and maintenance machine warning warning",
+   "exclusion": "The machine correction maintenance period set by the user (15 days), and the dialog box will pop up, which will automatically disappear after 12 minutes.",
+   "rule": "aidite5x-maint-calibrate"
+  },
+  {
+   "page": 3,
+   "code": "A3413",
+   "content": "Illegal illegal number was detected in the knife",
+   "reason": "The knife bank is abnormal",
+   "exclusion": "Reset the knife bank",
+   "rule": "aidite5x-tool-number"
+  },
+  {
+   "page": 3,
+   "code": "A3561",
+   "content": "The length of the base saved in the system has been cleared to 0",
+   "reason": "The knife bank is abnormal",
+   "exclusion": "Reset the knife bank",
+   "rule": "aidite5x-magazine"
+  },
+  {
+   "page": 3,
+   "code": "A3562",
+   "content": "The Z coordinate value of the knife point ([longest knife length] plus [safe distance]) exceeds the Z positive soft limit",
+   "reason": "The knife bank is abnormal",
+   "exclusion": "Contact equipment manufacturer",
+   "rule": "aidite5x-z-soft-limit"
+  },
+  {
+   "page": 3,
+   "code": "A3563",
+   "content": "The T instruction is not in the valid range [only 1~69]",
+   "reason": "T instruction error",
+   "exclusion": "Check the tool number value of the CAM software.",
+   "rule": "aidite5x-tool-number"
+  },
+  {
+   "page": 3,
+   "code": "A3566",
+   "content": "The XYZ axis does not return to zero, so the blade length measurement cannot be made",
+   "reason": "The machine did not return to zero",
+   "exclusion": "Back to zero operation",
+   "rule": "aidite5x-not-homed"
+  },
+  {
+   "page": 3,
+   "code": "A3569",
+   "content": "The current knife number of the spindle is inconsistent with the specified measuring knife number",
+   "reason": "The knife bank is abnormal",
+   "exclusion": "Reset the knife bank",
+   "rule": "aidite5x-tool-number"
+  },
+  {
+   "page": 3,
+   "code": "A3570",
+   "content": "The continuous measurement error of the knife length is too large, which may be dirty to the knife instrument",
+   "reason": "The knife instrument needs to be cleaned or faulty",
+   "exclusion": "Detection of the knife instrument",
+   "note": "merged across page 3/4",
+   "rule": "aidite5x-tool-setter-dirty"
+  },
+  {
+   "page": 4,
+   "code": "A3571",
+   "content": "Touching the instrument while moving quickly, it may be measured longer than [longest knife length]",
+   "reason": "The tool is too long",
+   "exclusion": "Check the knife length",
+   "rule": "aidite5x-tool-too-long"
+  },
+  {
+   "page": 4,
+   "code": "A3572",
+   "content": "The knife instrument has been touched before the slow detection, and the [retreat amount] is too small",
+   "reason": "The knife bank is abnormal",
+   "exclusion": "Reset the knife bank",
+   "rule": "aidite5x-magazine"
+  },
+  {
+   "page": 4,
+   "code": "A3574",
+   "content": "The difference between the measured knife length and the system knife length is out of range and may have been worn or broken",
+   "reason": "Broken broken or broken knife",
+   "exclusion": "Change the knife",
+   "rule": "aidite5x-tool-broken"
+  },
+  {
+   "page": 4,
+   "code": "A3575",
+   "content": "No detection signal detected, may be broken or invalid to the knife signal",
+   "reason": "Broken broken or broken knife",
+   "exclusion": "Change the knife",
+   "rule": "aidite5x-tool-broken"
+  },
+  {
+   "page": 4,
+   "code": "A3577",
+   "content": "The value of the long compensation table deviates greatly from the detection value of broken knife, please update the detection value of broken knife",
+   "reason": "Broken broken or broken knife",
+   "exclusion": "Change the knife",
+   "rule": "aidite5x-tool-broken"
+  },
+  {
+   "page": 4,
+   "code": "A3578",
+   "content": "The empty knife is abnormal and may fail",
+   "reason": "The knife bank is abnormal",
+   "exclusion": "Reset the edge of the store to check the tool on the store",
+   "rule": "aidite5x-magazine"
+  },
+  {
+   "page": 4,
+   "code": "A3579",
+   "content": "The instruction knife number is not in the range T 0 to T 10",
+   "reason": "Enter the wrong knife change instruction",
+   "exclusion": "Check the input knife change instruction",
+   "rule": "aidite5x-tool-number"
+  },
+  {
+   "page": 4,
+   "code": "A3580",
+   "content": "The current knife number is not in the range T 0 to T 10",
+   "reason": "The current knife number is wrong",
+   "exclusion": "Reset the knife bank",
+   "rule": "aidite5x-tool-number"
+  },
+  {
+   "page": 4,
+   "code": "A3581",
+   "content": "The actual measured tool length is greater than the set longest knife length",
+   "reason": "The tool exposed length exceeds the allowable length",
+   "exclusion": "Stop the current machining, replace the tool, and then reprocess",
+   "rule": "aidite5x-tool-too-long"
+  },
+  {
+   "page": 4,
+   "code": "A3582",
+   "content": "Before performing the automatic correction, the spindle needs to be in the T0 empty knife state",
+   "reason": "The current spindle knife number is not T0",
+   "exclusion": "Before automatic correction, the spindle knife number must be empty knife, and the knife number is T0",
+   "rule": "aidite5x-calibration-t0"
+  },
+  {
+   "page": 4,
+   "code": "A3583",
+   "content": "For the abnormal probe length, please confirm to check the probe size and installation location",
+   "reason": "Automatic correction for abnormal probe length",
+   "exclusion": "Stop the current correction and check the length of the automatic correction probe",
+   "rule": "aidite5x-calibration"
+  },
+  {
+   "page": 5,
+   "code": "A3584",
+   "content": "Probe trigger signal is abnormal, please check the probe signal",
+   "reason": "Automatically correct for an abnormal probe signal",
+   "exclusion": "Stop the current correction, check the IO monitoring screen, and check the automatic calibration probe signal",
+   "rule": "aidite5x-calibration"
+  },
+  {
+   "page": 5,
+   "code": "A3585",
+   "content": "Probe protection positioning, the current coordinate system error is too large",
+   "reason": "Automatic correction identifies that the current artifact coordinate system error of the device is too large",
+   "exclusion": "Stop the current correction and reset the equipment artifact coordinate system before automatic correction",
+   "rule": "aidite5x-calibration"
+  },
+  {
+   "page": 5,
+   "code": "A3586",
+   "content": "The two detection errors are too large",
+   "reason": "Automatic correction probe values are too much",
+   "exclusion": "Stop the current correction, please clean the warehouse environment before automatic correction, and dry the cutting fluid during wet cutting",
+   "rule": "aidite5x-calibration"
+  },
+  {
+   "page": 5,
+   "code": "A3587",
+   "content": "Center-X deviation is too large",
+   "reason": "Automatic correction detects that the current device coordinate frame X is too greatly",
+   "exclusion": "Stop the current correction and reset the equipment artifact coordinate system before automatic correction",
+   "rule": "aidite5x-calibration"
+  },
+  {
+   "page": 5,
+   "code": "A3588",
+   "content": "The center Y deviation is too large",
+   "reason": "Automatic correction detects excessive deviation of the current device frame Y",
+   "exclusion": "Stop the current correction and reset the equipment artifact coordinate system before automatic correction",
+   "rule": "aidite5x-calibration"
+  },
+  {
+   "page": 5,
+   "code": "A3589",
+   "content": "Center, Z deviation is too large",
+   "reason": "Automatic correction detects the excessive deviation of the current device coordinate system Z",
+   "exclusion": "Stop the current correction and reset the equipment artifact coordinate system before automatic correction",
+   "rule": "aidite5x-calibration"
+  },
+  {
+   "page": 5,
+   "code": "A3590",
+   "content": "The deviation of the work piece coordinate system Z is too large",
+   "reason": "Automatic correction detects the excessive deviation of the current device coordinate system Z",
+   "exclusion": "Stop the current correction and reset the equipment artifact coordinate system before automatic correction",
+   "rule": "aidite5x-calibration"
+  },
+  {
+   "page": 5,
+   "code": "A3591",
+   "content": "Automatically correct for file errors",
+   "reason": "Automatically correct for file errors",
+   "exclusion": "Contact the manufacturer to update the equipment to automatically correct the built-in documents",
+   "note": "exclusion wraps as 'built-' / 'in documents' (hyphenated line break); joined as 'built-in'",
+   "rule": "aidite5x-calibration"
+  },
+  {
+   "page": 5,
+   "code": "A3592",
+   "content": "Automatic correction is not completed and the knife library is reset, please remove the calibration probe",
+   "reason": "The automatic correction failed, and T0-T10 was changed",
+   "exclusion": "The automatic correction fails, remove the automatic correction probe, and then perform the normal knife change action",
+   "rule": "aidite5x-calibration"
+  },
+  {
+   "page": 5,
+   "code": "A3593",
+   "content": "B axis position is abnormal, reset the system, manual interface JOG move + B axis to the horizontal position, and then back to zero",
+   "reason": "B axis back to zero before the abnormal position, or B axis back to zero into the knife library",
+   "exclusion": "Reset the system, manual screen JOG move the + B axis to the horizontal position, and then back to zero",
+   "rule": "aidite5x-b-axis"
+  },
+  {
+   "page": 5,
+   "code": "A3801",
+   "content": "Automatic correction is complete, please reset the system, remove the probe, remove the correction plate and reset the library",
+   "reason": "Automatic correction was completed successfully",
+   "exclusion": "Reset the system, remove the probe, remove the correction disc and reset the knife bank",
+   "note": "content continues in the second table on page 5 (empty code cell row merged)",
+   "rule": "aidite5x-calibration-done"
+  },
+  {
+   "page": 5,
+   "code": "A*****",
+   "content": "Feed shaft servo alarm",
+   "reason": "Servo drive alarm",
+   "exclusion": "In automatic mode, reset the machine, clear the alarm, close the machine and restart in 20 seconds, the alarm will automatically clear. After you restart the machine, if the alarm is not cleared, take the servo alarm code content on the interface and send it to the manufacturer.",
+   "note": "placeholder/wildcard code as printed (A followed by five asterisks); represents servo alarm codes",
+   "rule": "aidite5x-servo"
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+<Project>
+  <!--
+    Użycie (bez zmian w repozytorium; projekty testów przebudują się z dodatkowym plikiem):
+      $env:WER_SEED = '4242'
+      dotnet test <projekt testów albo src\MaszynyAlert.sln> -c Release -m:1 -nr:false `
+        -p:CustomAfterMicrosoftCommonTargets=<repo>\tools\higiena-testow\WerRandomOrder.targets
+    Po diagnostyce zwykłe `dotnet build`/`dotnet test` (bez tej właściwości) przywraca domyślną kolejność xUnit.
+  -->
+  <ItemGroup Condition="'$(IsTestProject)' == 'true'">
+    <Compile Include="$(MSBuildThisFileDirectory)WerRandomOrderer.cs" Link="WerRandomOrderer.cs" />
+    <AssemblyAttribute Include="Xunit.TestCaseOrdererAttribute">
+      <_Parameter1>WerHigiena.RandomTestCaseOrderer</_Parameter1>
+      <_Parameter2>$(AssemblyName)</_Parameter2>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="Xunit.TestCollectionOrdererAttribute">
+      <_Parameter1>WerHigiena.RandomTestCollectionOrderer</_Parameter1>
+      <_Parameter2>$(AssemblyName)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+</Project>

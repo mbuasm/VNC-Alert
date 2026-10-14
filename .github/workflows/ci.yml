@@ -1,0 +1,22 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  testy:
+    permissions:
+      contents: read
+    uses: mbuasm/serwer-laptop/.github/workflows/testy.yml@main
+    with:
+      typ: desktop

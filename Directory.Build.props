@@ -1,0 +1,26 @@
+<Project>
+  <!-- Wspólne ustawienia wszystkich projektów w repozytorium. -->
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Deterministic>true</Deterministic>
+    <VncAlertMajorMinor>0.4</VncAlertMajorMinor>
+    <VncAlertBuildNumberOffset>270</VncAlertBuildNumberOffset>
+    <VncAlertBuildNumber Condition="'$(VncAlertBuildNumber)' == '' And '$(GITHUB_RUN_NUMBER)' != ''">$([MSBuild]::Add($(GITHUB_RUN_NUMBER), $(VncAlertBuildNumberOffset)))</VncAlertBuildNumber>
+    <VersionPrefix Condition="'$(VncAlertBuildNumber)' != ''">$(VncAlertMajorMinor).$(VncAlertBuildNumber)</VersionPrefix>
+    <VersionSuffix Condition="'$(VncAlertBuildNumber)' != ''">$(VNCALERT_VERSION_SUFFIX)</VersionSuffix>
+    <VersionPrefix Condition="'$(VncAlertBuildNumber)' == ''">$(VncAlertMajorMinor).0</VersionPrefix>
+    <VersionSuffix Condition="'$(VncAlertBuildNumber)' == ''">dev</VersionSuffix>
+    <Authors>VNC Alert</Authors>
+    <Product>VNC Alert</Product>
+    <NeutralLanguage>pl-PL</NeutralLanguage>
+    <SatelliteResourceLanguages>pl;en</SatelliteResourceLanguages>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- Projekty z TFM net10.0-windows mają się kompilować także na Linux (CI/testy kompilacji). -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+  </PropertyGroup>
+</Project>

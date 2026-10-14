@@ -1,0 +1,255 @@
+<Window Style="{StaticResource {x:Type Window}}" x:Class="MaszynyAlert.App.Views.StatusWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="VNC Alert — Panel administracyjny"
+        Width="1220" Height="850"
+        MinWidth="700" MinHeight="500"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource PanelBackgroundBrush}">
+    <DockPanel>
+      <Border DockPanel.Dock="Top" Background="{DynamicResource HeaderBandBrush}" Padding="24,18">
+        <DockPanel>
+          <Button DockPanel.Dock="Right" Content="Zablokuj panel" Click="Lock_Click"/>
+          <StackPanel><TextBlock Text="VNC Alert" Foreground="{DynamicResource HeaderBandTextBrush}" FontSize="23" FontWeight="SemiBold"/>
+            <TextBlock Text="Panel administracyjny • dostęp chroniony hasłem" Foreground="{DynamicResource HeaderBandMutedTextBrush}" Margin="0,4,0,0"/></StackPanel>
+        </DockPanel>
+      </Border>
+    <TabControl Margin="16" x:Name="AdminTabs">
+      <TabItem x:Name="ReportTab" Header="Raport postojów"><ContentControl x:Name="ReportHost"/></TabItem>
+      <TabItem x:Name="InstructionsTab" Header="Instrukcje naprawy"><ContentControl x:Name="InstructionsHost"/></TabItem>
+      <TabItem x:Name="MultiComputerTab" Header="Praca na kilku komputerach"><ContentControl x:Name="MultiComputerHost"/></TabItem>
+      <TabItem x:Name="SettingsTab" Header="Ustawienia">
+        <TabControl x:Name="SettingsTabs" Margin="0,8,0,0">
+          <TabItem x:Name="SharedConfigTab" Header="Konfiguracja"><ContentControl x:Name="SharedConfigHost"/></TabItem>
+          <TabItem x:Name="LocalSetupTab" Header="Ten komputer"><ContentControl x:Name="LocalSetupHost"/></TabItem>
+        </TabControl>
+      </TabItem>
+      <TabItem x:Name="TechnicalTab" Header="Podgląd techniczny">
+    <ScrollViewer x:Name="TechnicalScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel x:Name="TechnicalSections" Margin="12">
+        <!-- Nagłówek: rola, wersja, tryb, katalog danych, OCR -->
+        <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1" Padding="10" Margin="0,0,0,8">
+            <StackPanel>
+                <TextBlock Text="{Binding RoleText}" FontSize="16" FontWeight="Bold">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsRoleWarning}" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource WarningTextBrush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <TextBlock Text="{Binding VersionText}" TextWrapping="Wrap" Margin="0,4,0,0" />
+                <WrapPanel Margin="0,4,0,0">
+                    <TextBlock Text="{Binding ModeText}" Margin="0,0,20,0" />
+                    <TextBlock Text="{Binding DataDirText}" />
+                </WrapPanel>
+                <TextBlock Text="{Binding OcrText}" Margin="0,4,0,0">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsOcrWarning}" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource WarningTextBrush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <!-- Zrzuty diagnostyczne: ile ich jest, ile zajmują i ręczne czyszczenie bez UAC
+                     (katalog captures jest zapisywalny dla użytkownika — program sam tam pisze). -->
+                <WrapPanel Margin="0,8,0,0">
+                    <TextBlock Text="{Binding Captures.SummaryText}" VerticalAlignment="Center" Margin="0,0,12,0">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Captures.IsAtLimit}" Value="True">
+                                        <Setter Property="Foreground" Value="{DynamicResource WarningTextBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <Button Content="Usuń zrzuty starsze niż dzień"
+                            Command="{Binding Captures.DeleteOlderThanDayCommand}" />
+                    <TextBlock Text="{Binding Captures.ActionText}" VerticalAlignment="Center"
+                               Foreground="{DynamicResource TextSecondaryBrush}" Margin="12,0,0,0" />
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+
+        <GroupBox Header="Maszyny" Margin="0,0,0,10">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="0,6,0,0">
+                    <TextBlock Text="Pokaż ekran maszyny:" VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <ComboBox Width="200" ItemsSource="{Binding MachinePicker}" SelectedItem="{Binding SelectedMachine}" />
+                    <Button x:Name="ShowScreenButton" Content="Pokaż ekran" Margin="8,0,0,0" Click="ShowScreenButton_Click" />
+                    <Button x:Name="RefreshButton" Content="Odśwież" Margin="8,0,0,0" Click="RefreshButton_Click" />
+                </StackPanel>
+                <DataGrid ItemsSource="{Binding Machines}" AutoGenerateColumns="False" IsReadOnly="True" MaxHeight="480"
+                          HeadersVisibility="Column" CanUserAddRows="False" CanUserDeleteRows="False"
+                          GridLinesVisibility="Horizontal" RowBackground="{DynamicResource CardBackgroundBrush}" AlternatingRowBackground="{DynamicResource SurfaceAltBrush}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Nazwa" Binding="{Binding Name}" Width="0.9*" MinWidth="60" />
+                        <DataGridTextColumn Header="Adres" Binding="{Binding Address}" Width="1.2*" MinWidth="70" />
+                        <DataGridTextColumn Header="Profil" Binding="{Binding Profile}" Width="0.9*" MinWidth="55" />
+                        <DataGridTextColumn Header="Stan" Binding="{Binding StateText}" Width="0.9*" MinWidth="55" />
+                        <DataGridTextColumn Header="Źródło" Binding="{Binding Source}" Width="2*" MinWidth="90" />
+                        <DataGridTextColumn Header="RFB / auth / format" Binding="{Binding RfbInfo}" Width="1.5*" MinWidth="70" />
+                        <DataGridTextColumn Header="Ostatni odbiór obrazu" Binding="{Binding LastFrameText}" Width="1.6*" MinWidth="80" />
+                        <DataGridTextColumn Header="Czerwień %" Binding="{Binding RedPercentText}" Width="0.8*" MinWidth="55" />
+                        <DataGridTextColumn Header="Postęp" Binding="{Binding ProgressText}" Width="1.2*" MinWidth="60" />
+                        <DataGridTextColumn Header="Ekran HMI" Binding="{Binding ScreenText}" Width="2*" MinWidth="90">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="Wrap" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Ostatni tekst OCR" Binding="{Binding LastOcrText}" Width="1.5*" MinWidth="70" />
+                        <DataGridTextColumn Header="Ostatni błąd" Binding="{Binding LastError}" Width="2*" MinWidth="90" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+        </GroupBox>
+
+        <!-- Ukryta, gdy komunikacja między komputerami jest wyłączona (tryb jednego komputera). -->
+        <GroupBox Header="Komputery" Margin="0,0,0,10"
+                  Visibility="{Binding IsClusterEnabled, Converter={StaticResource BoolToVisibility}}">
+            <DockPanel>
+            <TextBlock DockPanel.Dock="Top" Text="{Binding PeersWarning}" TextWrapping="Wrap" FontWeight="SemiBold"
+                       Foreground="{DynamicResource WarningTextBrush}" Margin="0,0,0,6"
+                       Visibility="{Binding PeersWarning, Converter={StaticResource NullToVisibility}}" />
+            <DataGrid ItemsSource="{Binding Peers}" AutoGenerateColumns="False" IsReadOnly="True" MaxHeight="256"
+                      HeadersVisibility="Column" CanUserAddRows="False" CanUserDeleteRows="False"
+                      GridLinesVisibility="Horizontal" RowBackground="{DynamicResource CardBackgroundBrush}" AlternatingRowBackground="{DynamicResource SurfaceAltBrush}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Host" Binding="{Binding Host}" Width="*" />
+                    <DataGridTextColumn Header="Żywy" Binding="{Binding IsAliveText}" Width="60" />
+                    <DataGridTextColumn Header="Rola" Binding="{Binding RoleText}" Width="140" />
+                    <DataGridTextColumn Header="Priorytet" Binding="{Binding Priority}" Width="80" />
+                    <DataGridTextColumn Header="Wersja" Binding="{Binding Version}" Width="110" />
+                    <DataGridTextColumn Header="Maszyny" Binding="{Binding MachinesText}" Width="80" />
+                    <DataGridTextColumn Header="Ostatnio widziany" Binding="{Binding LastSeenText}" Width="140" />
+                    <DataGridTextColumn Header="Współpraca" Binding="{Binding CooperationText}" Width="2*" MinWidth="160">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextWrapping" Value="Wrap" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsIncompatible}" Value="True">
+                                        <Setter Property="Foreground" Value="{DynamicResource WarningTextBrush}" />
+                                        <Setter Property="FontWeight" Value="SemiBold" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            </DockPanel>
+        </GroupBox>
+
+        <GroupBox Header="Alerty aktywne" Margin="0,0,0,10">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" MinHeight="72" MaxHeight="320">
+                <ItemsControl ItemsSource="{Binding ActiveAlerts}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,0,1" Padding="4">
+                                <DockPanel>
+                                    <Button DockPanel.Dock="Right" Content="Idę sprawdzić" Command="{Binding AcknowledgeCommand}" Margin="8,0,0,0" />
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Line1}" FontWeight="Bold" TextWrapping="Wrap" />
+                                        <TextBlock Text="{Binding StatusText}"
+                                                   Visibility="{Binding StatusText, Converter={StaticResource NullToVisibility}}"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" />
+                                        <Expander Header="Jak rozwiązać ten problem?" Margin="0,8,0,0">
+                                            <TextBlock Text="{Binding Solution}" TextWrapping="Wrap" Margin="0,8,0,0"/>
+                                        </Expander>
+                                    </StackPanel>
+                                </DockPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </GroupBox>
+
+        <!-- Alerty "maszyna stoi bez pracy" — osobno od błędów/braku łączności,
+             bo "Skasuj" chowa pozycję od razu (brak 60 s okna "sprawdza ..." jak przy błędach). -->
+        <GroupBox Header="Maszyny bez pracy – dołóż prace" Margin="0,0,0,10">
+            <DockPanel>
+                <!-- Zasięg „✕ Skasuj”: czy potwierdzenie zgaśnie także na pozostałych komputerach grupy
+                     (AppOrchestrator.DismissScopeNote). -->
+                <TextBlock DockPanel.Dock="Bottom" Text="{Binding DismissScopeNote}" TextWrapping="Wrap"
+                           FontSize="11" Margin="4,6,4,0">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsDismissScopeWarning}" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource WarningTextBrush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" MinHeight="72" MaxHeight="320">
+                    <ItemsControl ItemsSource="{Binding IdleAlerts}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,0,1" Padding="4">
+                                    <DockPanel>
+                                        <Button DockPanel.Dock="Right" Content="✕ Skasuj" Command="{Binding DismissCommand}"
+                                                ToolTip="{Binding DismissHint}" Margin="8,0,0,0" />
+                                        <TextBlock Text="{Binding Line1}" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Center" />
+                                    </DockPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </DockPanel>
+        </GroupBox>
+
+        <!-- Powiadomienia "włącz okno podglądu stanu maszyny" (HMI pokazuje inny ekran niż główny) — osobno,
+             bo "✕ Zamknij" chowa pozycję od razu, a przypomnienie wraca samo, gdy ekran nadal jest niewłaściwy. -->
+        <GroupBox Header="Ekran HMI – włącz okno podglądu" Margin="0,0,0,10">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" MinHeight="72" MaxHeight="320">
+                <ItemsControl ItemsSource="{Binding WrongScreenAlerts}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,0,1" Padding="4">
+                                <DockPanel>
+                                    <Button DockPanel.Dock="Right" Content="✕ Zamknij" Command="{Binding DismissCommand}" Margin="8,0,0,0" />
+                                    <TextBlock Text="{Binding Line1}" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Center" />
+                                </DockPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </GroupBox>
+
+        <GroupBox Header="Historia (ostatnie 50)" Margin="0,0,0,10">
+            <ListBox ItemsSource="{Binding HistoryLines}" MinHeight="120" MaxHeight="360" />
+        </GroupBox>
+
+        <!-- Log: ok. 30 linii Consolas 11 pt widocznych naraz, reszta przewija się w liście. -->
+        <GroupBox Header="Log (ostatnie 50 linii)">
+            <DockPanel>
+                <Button DockPanel.Dock="Bottom" x:Name="OpenLogsFolderButton" Content="Otwórz folder logów"
+                        HorizontalAlignment="Left" Margin="0,6,0,0" Click="OpenLogsFolderButton_Click" />
+                <ListBox x:Name="LogList" ItemsSource="{Binding LogLines}" FontFamily="Consolas" FontSize="11" MinHeight="320" MaxHeight="600" />
+            </DockPanel>
+        </GroupBox>
+    </StackPanel>
+    </ScrollViewer>
+      </TabItem>
+    </TabControl>
+    </DockPanel>
+</Window>

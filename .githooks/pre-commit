@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# uzycie: pre-commit
+set -euo pipefail
+
+blad=0
+
+w_indeksie() { git cat-file -e ":$1" 2>/dev/null; }
+if w_indeksie CLAUDE.md || w_indeksie AGENTS.md; then
+  if ! w_indeksie CLAUDE.md || ! w_indeksie AGENTS.md \
+    || [ "$(git rev-parse :CLAUDE.md)" != "$(git rev-parse :AGENTS.md)" ]; then
+    echo "blad: CLAUDE.md i AGENTS.md musza miec identyczna tresc" >&2
+    blad=1
+  fi
+fi
+
+dozwolone='^(tests/.*|CLAUDE\.md|AGENTS\.md|docs/architektura\.md|src/MaszynyAlert\.App/LICENSES-THIRD-PARTY\.txt|config/test-ekran/CZYTAJ-TO\.txt)$'
+while IFS= read -r -d '' sciezka; do
+  case "$sciezka" in
+    *.[mM][dD]|*.[tT][xX][tT])
+      if ! printf '%s' "$sciezka" | grep -qE "$dozwolone"; then
+        echo "blad: nowy plik informacyjny poza dozwolona lista: $sciezka" >&2
+        blad=1
+      fi
+      ;;
+  esac
+done < <(git diff --cached --name-only --diff-filter=ACR -z)
+
+wzorzec='co-authored-by|claude|codex|reportDurationFactor|RecoveryHash|TODO:.*([0-9]{4}-[0-9]{2}-[0-9]{2}|\b[0-3]?[0-9]\.[01][0-9]\b)'
+trafienia="$(git diff --cached -U0 --no-color --no-ext-diff -- . \
+    ':(exclude)CLAUDE.md' ':(exclude)AGENTS.md' ':(exclude).gitignore' ':(exclude).githooks' ':(exclude).claude' \
+  | awk '/^\+\+\+ (b\/|\/dev\/null)/ { plik = substr($0, 7); next } /^\+/ { print plik ": " substr($0, 2) }' \
+  | grep -iE "$wzorzec" || true)"
+if [ -n "$trafienia" ]; then
+  echo "blad: zabronione tresci w dodanych liniach:" >&2
+  printf '%s\n' "$trafienia" | head -n 20 >&2
+  blad=1
+fi
+
+exit "$blad"

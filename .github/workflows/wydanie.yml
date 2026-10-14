@@ -1,0 +1,37 @@
+name: wydanie
+
+on:
+  workflow_dispatch:
+    inputs:
+      runs_on:
+        description: 'JSON etykiet runnera dla `sprawdz`, np. ["self-hosted","windows","ui-msi"]; puste = vars.SPRAWDZ_RUNS_ON albo windows-latest'
+        type: string
+        required: false
+        default: ''
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wydanie-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  sprawdz:
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    permissions:
+      contents: read
+    uses: mbuasm/serwer-laptop/.github/workflows/ui-sprawdz.yml@main
+    with:
+      runs-on: ${{ inputs.runs_on || vars.SPRAWDZ_RUNS_ON || '"windows-latest"' }}
+
+  wydanie:
+    needs: sprawdz
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    uses: mbuasm/serwer-laptop/.github/workflows/wydanie.yml@main
+    with:
+      projekt: maszyny-alert
+      polecenie-budowania: 'powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\scripts\Przygotuj-Wydanie.ps1'
+      instalator: installer/MaszynyAlert-wydanie.iss

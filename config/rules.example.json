@@ -1,0 +1,357 @@
+{
+  // Słownik błędów — OSOBNA BAZA DLA KAŻDEGO TYPU MASZYN.
+  //
+  // Każda baza może mieć:
+  //   "name"         – krótka nazwa typu maszyn widoczna w Panelu → Instrukcje naprawy;
+  //   "description"  – skąd pochodzi lista błędów (dla człowieka, program jej nie używa);
+  //   "codes"        – KODY alarmów (numer → krótka polska nazwa), sprawdzane PIERWSZE;
+  //   "rules"        – reguły na TREŚCI komunikatu, sprawdzane, gdy numeru nie widać.
+  "databases": {
+
+    "opencnc": {
+      "name": "Aidite 1-7",
+      "description": "Lista alarmów producenta AMD500DCS, oprogramowanie 6.9.2 (plik \"6.9.2_AMD500DCS_QA.pdf\") + reguły na treści z hali.",
+      "codeIdPrefix": "",
+
+      // Słownik błędów. Dwie sekcje:
+      //
+      //   "codes" – KODY alarmów sterownika (numer → krótka polska nazwa). Źródło: lista alarmów producenta
+      //             Komunikat na pasku statusu HMI ma format "No.<numer> [N]<treść>" – program wycina numer
+      //             (z tolerancją pomyłek OCR w cyfrach: O→0, I/L→1, "N0"→"No") i szuka go TUTAJ NAJPIERW.
+      //             Numer jest jedyną częścią komunikatu, którą OCR czyta pewnie – treść bywa przekręcona (brak
+      //             pakietu OCR en-US) albo po chińsku. Trafienie daje na pasku alertu krótką nazwę, np. "Servo 6".
+      //
+      // Gdy nie trafi ani kod, ani reguła: numer widoczny → "Błąd nr <numer> (brak opisu w słowniku)"; tekst
+      // nieczytelny → "Błąd (nie odczytano treści)"; inaczej "Błąd: <surowy tekst>".
+      //
+      // ---- Sekcja "codes" -------------------------------------------------------------------------------
+      // Pola: "shortText" (krótka nazwa po polsku – to widzi operator), "category" (narzedzie | tacka |
+      // restart | inny; domyślnie "inny"), "priority" (domyślnie 0, wyższa = ważniejsza), "description"
+      // (oryginalna angielska treść z listy producenta – tylko informacyjnie, program jej nie używa).
+      "codes": [
+        // --- Serwonapędy i osie (numer w zakresie = oś: 700 → oś 1, 705 → oś 6) ---
+        { "from": 700, "to": 719, "shortText": "Servo {n}", "category": "restart", "priority": 90, "description": "Axis %d servo alarm" },
+        { "from": 720, "to": 739, "shortText": "Servo {n} niewłączone", "category": "restart", "priority": 80, "description": "Axis %d servo not enabled" },
+        { "from": 740, "to": 759, "shortText": "Servo {n} – błąd załączenia", "category": "restart", "priority": 75, "description": "Axis %d servo enable failure" },
+        { "from": 760, "to": 779, "shortText": "Oś {n} – krańcówka (−)", "category": "restart", "priority": 70, "description": "Shaft %d negative hard limit" },
+        { "from": 780, "to": 799, "shortText": "Oś {n} – krańcówka (+)", "category": "restart", "priority": 70, "description": "Shaft %d positive hard limit" },
+        { "from": 3300, "to": 3307, "shortText": "Oś {n} – limit programowy (−)", "category": "restart", "priority": 60, "description": "Shaft %d negative soft limit" },
+        { "from": 3320, "to": 3327, "shortText": "Oś {n} – limit programowy (+)", "category": "restart", "priority": 60, "description": "Shaft %d positive soft limit" },
+        { "code": 515, "shortText": "Oś poza zakresem (program)", "category": "restart", "priority": 60, "description": "Axis %d target position exceeded, line number %d" },
+        { "code": 3340, "shortText": "Oś poza zakresem (cel)", "category": "restart", "priority": 60, "description": "Axis %d target position exceeded" },
+        { "code": 1102, "shortText": "Oś poza zakresem (+)", "category": "restart", "priority": 60, "description": "axis %d position beyond positive travel, line number %d" },
+        { "code": 1103, "shortText": "Oś poza zakresem (−)", "category": "restart", "priority": 60, "description": "axis %d position exceeds negative travel, line number %d" },
+        { "code": 504, "shortText": "Inicjalizacja osi", "category": "restart", "priority": 60, "description": "Axis %d initialization failed" },
+
+        // --- Stop awaryjny, bazowanie, ciśnienie, chłodzenie ---
+        { "code": 200, "shortText": "Stop awaryjny", "category": "restart", "priority": 95, "description": "Emergency stop alarm" },
+        { "code": 1499, "shortText": "Stop awaryjny", "category": "restart", "priority": 95, "description": "System in emergency stop..." },
+        { "code": 1200, "shortText": "Bazowanie (Home)", "category": "restart", "priority": 50, "description": "Request for zero return alarm" },
+        { "code": 1700, "shortText": "Bazowanie po zmianie parametru", "category": "restart", "priority": 50, "description": "The parameter has been modified, please return to zero" },
+        { "code": 1701, "shortText": "Reset po zmianie parametru", "category": "restart", "priority": 50, "description": "The parameters have been changed, please reset" },
+        { "code": 3028, "shortText": "Bazowanie nieudane", "category": "restart", "priority": 55, "description": "Zero return failed, please tap reset in zero return mode and then return to zero" },
+        { "code": 1204, "shortText": "Ciśnienie powietrza", "category": "inny", "priority": 85, "description": "Insufficient air pressure alarm" },
+        { "code": 1203, "shortText": "Chłodzenie / pompa", "category": "inny", "priority": 85, "description": "Abnormal ice machine operation alarm" },
+        { "code": 1240, "shortText": "Falownik wrzeciona", "category": "restart", "priority": 85, "description": "Inverter alarm No. 1" },
+
+        // --- Narzędzia (pomiar narzędzia = "tool setting"; magazyn narzędzi) ---
+        { "code": 1615, "shortText": "Narzędzie – pomiar poza tolerancją", "category": "narzedzie", "priority": 65, "description": "Check for tool damage if the tool setting value is out of tolerance" },
+        { "code": 342, "shortText": "Pomiar narzędzia nieudany", "category": "narzedzie", "priority": 65, "description": "Failed knife pairing" },
+        { "code": 199, "shortText": "Czujnik narzędzi poza zakresem", "category": "narzedzie", "priority": 65, "description": "Over-range alarm on the tool setting instrument" },
+        { "code": 1632, "shortText": "Narzędzie nie wróciło do magazynu", "category": "narzedzie", "priority": 65, "description": "Tool return failed, tool still on spindle" },
+        { "code": 1610, "shortText": "Nr narzędzia poza magazynem", "category": "narzedzie", "priority": 65, "description": "Target tool number is not in the tool magazine range, exit tool change" },
+        { "from": 1225, "to": 1234, "shortText": "Zużyte narzędzie {n}", "category": "narzedzie", "priority": 65, "description": "Tool life up to" },
+        { "code": 3013, "shortText": "Pomiar narzędzia w toku", "category": "narzedzie", "description": "Tool setting in motion..." },
+
+        // --- Tacki / magazyn materiału (Z2 = chwytak tacek) ---
+        { "code": 1248, "shortText": "Tacka nie pobrana", "category": "tacka", "priority": 65, "description": "Z2 does not pick up the material tray" },
+        { "code": 1249, "shortText": "Tacka nie odłożona", "category": "tacka", "priority": 65, "description": "Z2 not discharged to the material tray" },
+        { "code": 1618, "shortText": "Nie znaleziono tacki", "category": "tacka", "priority": 65, "description": "No target material tray found" },
+        { "code": 1630, "shortText": "Nr tacki poza magazynem", "category": "tacka", "priority": 65, "description": "Target material number greater than bin capacity" },
+        { "code": 1631, "shortText": "Nr tacki = 0", "category": "tacka", "priority": 65, "description": "Target material number is 0 or less" },
+        { "code": 1633, "shortText": "Miejsce tacki zajęte", "category": "tacka", "priority": 65, "description": "Bin position with material in place, no discharging" },
+
+        // --- Makra, program NC, wykonanie (towarzyszą innym alarmom – niższy priorytet) ---
+        { "code": 520, "shortText": "Błąd makra", "category": "restart", "priority": 40, "description": "Macro execution error" },
+        { "code": 2502, "shortText": "Błąd wykonania", "category": "restart", "priority": 30, "description": "Execution error (usually accompanied by an axis error)" },
+        { "code": 2500, "shortText": "Błąd polecenia GT", "category": "restart", "priority": 20, "description": "GT command error" },
+        { "code": 2501, "shortText": "Informacja NC", "category": "inny", "priority": 5, "description": "<%d>NC Auxiliary Information" },
+        { "code": 1101, "shortText": "Błąd polecenia NC", "category": "inny", "priority": 10, "description": "<%d> command error, line number %d" },
+        { "code": 622, "shortText": "Błąd kodu NC", "category": "inny", "priority": 35, "description": "Parsing NC code errors" },
+        { "code": 1020, "shortText": "Program główny nie wczytany", "category": "inny", "priority": 35, "description": "<%d>Main program failed to load" },
+        { "code": 1023, "shortText": "Błąd odczytu kodu NC", "category": "inny", "priority": 35, "description": "<%d>Error reading code" },
+        { "code": 1025, "shortText": "Program NC za długi", "category": "inny", "priority": 35, "description": "<%d>Program exceeds the maximum number of lines allowed" },
+        { "code": 1040, "shortText": "Niedozwolony znak w NC", "category": "inny", "priority": 35, "description": "<%d>illegal character, line number %d" },
+        { "code": 1041, "shortText": "Brak makra M", "category": "inny", "priority": 35, "description": "<%d>M macro does not exist, line number %d" },
+        { "code": 1042, "shortText": "Brak makra G", "category": "inny", "priority": 35, "description": "<%d>G macro does not exist, line number %d" },
+        { "code": 1043, "shortText": "Brak makra T", "category": "inny", "priority": 35, "description": "<%d>T macro does not exist, line number %d" },
+        { "code": 1107, "shortText": "Bufor optymalizacji", "category": "inny", "priority": 35, "description": "<%d>Optimised buffer overflow, line number %d" },
+        { "code": 1108, "shortText": "Zła wartość H w NC", "category": "inny", "priority": 35, "description": "<%d>H value exception, line number %d" },
+        { "code": 1109, "shortText": "Zła wartość S w NC", "category": "inny", "priority": 35, "description": "<%d>S value exception, line number %d" },
+        { "code": 1110, "shortText": "Zła wartość D w NC", "category": "inny", "priority": 35, "description": "<%d>D value exception, line number %d" },
+        { "code": 1111, "shortText": "Zła wartość F w NC", "category": "inny", "priority": 35, "description": "<%d>F value exception, line number %d" },
+        { "code": 1112, "shortText": "Zła wartość M w NC", "category": "inny", "priority": 35, "description": "<%d>M value exception, line number %d" },
+        { "code": 1115, "shortText": "Błąd łuku w NC", "category": "inny", "priority": 35, "description": "<%d>Circle command error, line %d" },
+        { "code": 1172, "shortText": "Błąd danych łuku w NC", "category": "inny", "priority": 35, "description": "<%d>Input data error (check if arc data is correct), line number %d" },
+        { "code": 1503, "shortText": "Plik usunięty – wczytaj ponownie", "category": "inny", "priority": 35, "description": "The currently loaded file has been deleted, please reload it" },
+        { "code": 518, "shortText": "Mnożnik ręczny = 0", "category": "inny", "priority": 25, "description": "Manual multiplier of 0" },
+        { "code": 519, "shortText": "Mnożnik auto = 0", "category": "inny", "priority": 25, "description": "Automatic multiplier of 0" },
+        { "code": 3002, "shortText": "Posuw = 0", "category": "inny", "priority": 25, "description": "Feed multiplier is 0, no movement possible" },
+
+        // --- System, sterownik, PLC, firmware (zwykle wymagają serwisu / restartu) ---
+        { "code": 1, "shortText": "Brak pliku komunikatów", "category": "restart", "description": "Missing alarm message file" },
+        { "code": 2, "shortText": "Pamięć współdzielona", "category": "restart", "description": "Initialization of shared memory error" },
+        { "code": 11, "shortText": "Start NC nieudany", "category": "restart", "description": "NC start failure" },
+        { "code": 12, "shortText": "Plik PLC – szyfrowanie", "category": "restart", "description": "PLC encryption file error" },
+        { "code": 13, "shortText": "Start PLC nieudany", "category": "restart", "description": "PLC start-up failure" },
+        { "code": 14, "shortText": "PLC zawieszony", "category": "restart", "description": "PLC suspension" },
+        { "code": 20, "shortText": "Błąd wewnętrzny PLC", "category": "restart", "description": "PLC internal error, error code %d" },
+        { "code": 25, "shortText": "Konfiguracja osi", "category": "restart", "description": "Axis configuration error, error code %d" },
+        { "code": 26, "shortText": "Parametr osi", "category": "restart", "description": "Axis %d control parameter <%d> error" },
+        { "code": 30, "shortText": "Aktualizacja firmware – nie wyłączaj", "category": "inny", "description": "Firmware update in progress, please do not disconnect the power" },
+        { "code": 31, "shortText": "Firmware OK – restart", "category": "restart", "description": "Firmware upgrade successful, please reboot your system" },
+        { "code": 32, "shortText": "Firmware – błąd, restart", "category": "restart", "description": "Firmware upgrade failed, cannot reset, need to reboot system" },
+        { "code": 33, "shortText": "Plik firmware – restart", "category": "restart", "description": "Firmware file error, please reboot your system" },
+        { "code": 38, "shortText": "Odczyt konfiguracji osi", "category": "restart", "description": "Error reading axis configuration parameters" },
+        { "code": 40, "shortText": "Odczyt parametrów systemu", "category": "restart", "description": "Error reading system configuration parameters" },
+        { "code": 42, "shortText": "Odczyt parametrów osi", "category": "restart", "description": "Error reading axis control parameters" },
+        { "code": 43, "shortText": "Odczyt parametrów wrzeciona", "category": "restart", "description": "Error reading spindle configuration parameters" },
+        { "code": 44, "shortText": "Odczyt parametrów ruchu", "category": "restart", "description": "Error reading motion parameters" },
+        { "code": 45, "shortText": "Odczyt offsetów", "category": "restart", "description": "Error reading coordinate offset parameter" },
+        { "code": 46, "shortText": "Odczyt konfiguracji makr", "category": "restart", "description": "Error reading macro configuration parameters" },
+        { "code": 47, "shortText": "Odczyt parametrów makr", "category": "restart", "description": "Error reading macro public parameter" },
+        { "code": 90, "shortText": "System niezarejestrowany", "category": "inny", "description": "System not registered" },
+        { "code": 99, "shortText": "Inicjalizacja NC – osie", "category": "restart", "description": "NC initialisation, axis configuration error %d" },
+        { "code": 503, "shortText": "Karta sterująca", "category": "restart", "description": "Failed to initialise the control card" },
+        { "code": 1009, "shortText": "Parametr systemu", "category": "restart", "description": "<%d>System parameter error" },
+        { "code": 1504, "shortText": "Czas na konserwację", "category": "inny", "description": "Maintenance time is up, please complete the relevant actions" },
+        { "code": 1900, "shortText": "Kopia PLC – błąd USB", "category": "inny", "description": "Error backing up PLC file, try reinserting USB stick" },
+        { "code": 1901, "shortText": "Aktualizacja PLC – błąd USB", "category": "inny", "description": "Error updating PLC file, check USB stick and PLC folder" },
+        { "code": 2980, "shortText": "Restart – parametry systemu", "category": "restart", "description": "System parameters have been modified, please reboot the system" },
+        { "code": 2981, "shortText": "Restart – konfiguracja osi", "category": "restart", "description": "Axis configuration has been modified, please reboot the system" },
+        { "code": 2982, "shortText": "Restart – parametry sterowania", "category": "restart", "description": "The operation and control parameters have been modified, please restart the system" },
+        { "code": 2983, "shortText": "Restart – parametry osi", "category": "restart", "description": "Axis <%d> control parameter has been modified, please reboot the system" },
+        { "code": 2984, "shortText": "Restart – parametry wrzeciona", "category": "restart", "description": "Spindle <%d> control parameters have been modified, please restart the system" },
+        { "code": 4504, "shortText": "Restart – ważne parametry", "category": "restart", "description": "Important parameters have been changed, please reboot your system!" },
+        { "code": 4533, "shortText": "Aktualizacja OK – restart", "category": "restart", "description": "Update successful, please reboot your system" },
+        { "code": 4531, "shortText": "Kopia – brak USB", "category": "inny", "description": "Backup failed, check if the USB stick exists" },
+        { "code": 4532, "shortText": "Aktualizacja – brak USB", "category": "inny", "description": "Update failed, check if the USB stick exists" },
+        { "code": 4501, "shortText": "Licencja – pozostałe dni", "category": "inny", "description": "Number of days left in the system:%d" },
+        { "code": 4535, "shortText": "Zbliża się konserwacja", "category": "inny", "description": "%d days to maintenance time" },
+
+        // --- Komunikaty informacyjne / blokady obsługi (zwykle nie czerwone – dla kompletności listy) ---
+        { "code": 3016, "shortText": "Powrót do zera detalu", "category": "inny", "description": "Back to the origin of the workpiece in..." },
+        { "code": 3017, "shortText": "Powrót do punktu stałego", "category": "inny", "description": "Back to the fixed point in..." },
+        { "code": 3027, "shortText": "Bazowanie w toku", "category": "inny", "description": "Back to zero in motion..." },
+        { "code": 4510, "shortText": "Brak uprawnień", "category": "inny", "description": "No permission to operate, forbidden to operate" },
+        { "code": 4530, "shortText": "Brak uprawnień", "category": "inny", "description": "Low permissions, invalid operation" },
+        { "code": 4511, "shortText": "Import pliku zabroniony (praca)", "category": "inny", "description": "The system is running and file import is prohibited!" },
+        { "code": 4512, "shortText": "Operacja zabroniona (pauza)", "category": "inny", "description": "Operation is prohibited in suspended state, please reset to idle state first" },
+        { "code": 4513, "shortText": "Edycja zabroniona (auto)", "category": "inny", "description": "Edit operations are disabled in automatic mode" },
+        { "code": 4514, "shortText": "Edycja zabroniona (praca)", "category": "inny", "description": "Prohibit editing of documents when not idle" },
+        { "code": 4515, "shortText": "Wczytanie pliku zabronione (praca)", "category": "inny", "description": "Disable file loading in non-idle state" },
+        { "code": 4516, "shortText": "Usunięcie pliku zabronione (praca)", "category": "inny", "description": "Prohibit file deletion in non-idle state" },
+        { "code": 4517, "shortText": "Nowy plik zabroniony (praca)", "category": "inny", "description": "Disable new file operations in non-idle state" },
+        { "code": 4518, "shortText": "Zmiana nazwy zabroniona (praca)", "category": "inny", "description": "Disable file renaming in non-idle state" },
+        { "code": 4519, "shortText": "Parametry niedostępne (praca)", "category": "inny", "description": "Run state cannot access system parameters" },
+        { "code": 4520, "shortText": "Podgląd niedostępny (praca)", "category": "inny", "description": "Graphical preview not valid while system is running" },
+        { "code": 4521, "shortText": "Tryb blokowy niedostępny (praca)", "category": "inny", "description": "Run state cannot start single segment execution" },
+        { "code": 4525, "shortText": "Operacja zabroniona (praca)", "category": "inny", "description": "The system is not in the \"idle\" state, operation is prohibited" },
+        { "code": 4526, "shortText": "Eksport zabroniony (praca)", "category": "inny", "description": "File export operation not valid in non-idle state" },
+        { "code": 4527, "shortText": "Import zabroniony (praca)", "category": "inny", "description": "Non-idle file import operations are not valid" },
+        { "code": 4534, "shortText": "Plan produkcji wykonany", "category": "nie błąd", "description": "All procedures have been processed according to the production schedule (żółty – nie błąd; kategoria \"nie błąd\" = odczyt nie opisuje epizodu czerwieni)" }
+      ],
+
+      // ---- Sekcja "rules" ------------------------------------------------------------------------------
+      // Reguły na TREŚCI komunikatu – ścieżka zapasowa, gdy numeru alarmu nie widać. Kolejność dopasowania
+      // (patrz MessageMapper): najpierw reguły dla konkretnego profilu (pole "profile"), potem reguły globalne
+      // (bez pola "profile" = dotyczą wszystkich). W obrębie jednej reguły: najpierw "pattern" (wyrażenie
+      // regularne, bez rozróżniania wielkości liter) – sprawdzany na DWÓCH wariantach znormalizowanego tekstu
+      // OCR: zwykłym (litery A-Z/0-9, z podstawieniem typowych pomyłek OCR 0→O, 1→I – dobry dla SŁÓW, np.
+      // "servo alarm") i "KeepDigits" (BEZ tego podstawienia – dla wzorców z cyframi; wystarczy dopasowanie
+      // na KTÓRYMKOLWIEK wariancie). Potem "phrases" (dopasowanie rozmyte na zwykłym znormalizowanym tekście –
+      // tolerancja "maxDistance" błędów odczytu OCR na całych słowach; frazy są słowami, nie numerami, więc
+      // podstawienie 0/O i 1/I im nie szkodzi).
+      //
+      // UWAGA: czerwony tekst bywa DŁUŻSZY niż okienko statusu maszyny (HMI ucina go z obu stron, program
+      // dokleja wtedy "…" do odczytu). Dlatego frazy opieraj na charakterystycznych słowach ze ŚRODKA
+      // komunikatu, nie na jego początku/końcu. Nazwy ("shortText") trzymaj spójne z wpisami w "codes", bo
+      // ten sam błąd może raz trafić po numerze, a raz (numer ucięty) po treści.
+      "rules": [
+        // Reguła IGNORUJĄCA (kategoria "nie błąd"): tekst dopasowany do niej to znany komunikat, który
+        // błędem NIE jest – program nadal wykrywa czerwień po kolorze, ale taki odczyt nie może zostać
+        // treścią alertu ani zakończyć prób OCR (patrz Config.Rule.IgnoredCategory, Ocr.MappedMessage.Ignored).
+        {
+          "id": "plan-wykonany-informacja",
+          "pattern": "(ALL|AII|AI|A I|A II)\\s+PROCEDURES\\s+HAVE\\s+BEEN\\s+PROCESSED",
+          "phrases": ["All procedures have been processed"],
+          "maxDistance": 2,
+          "shortText": "Plan produkcji wykonany (żółty komunikat – nie błąd)",
+          "category": "nie błąd"
+        },
+        {
+          "id": "servo-alarm",
+          "pattern": "servo alarm",
+          "shortText": "Servo – alarm",
+          "category": "restart",
+          "priority": 90
+        },
+        {
+          "id": "servo-not-enabled",
+          "pattern": "servo isn.?t enabled|servo not enabled",
+          "shortText": "Servo niewłączone",
+          "category": "restart",
+          "priority": 80
+        },
+        {
+          "id": "home-request",
+          "pattern": "request home|home alarm|zero return",
+          "shortText": "Bazowanie (Home)",
+          "category": "restart",
+          "priority": 50
+        },
+        {
+          "id": "tray-grab",
+          "phrases": ["Failed to grab a tray"],
+          "shortText": "Tacka nie pobrana",
+          "category": "tacka"
+        },
+        {
+          "id": "tool-length",
+          "phrases": ["tool length"],
+          "shortText": "Długość narzędzia",
+          "category": "narzedzie"
+        },
+        {
+          "id": "tool-broken",
+          "pattern": "tool broken|tool break",
+          "shortText": "Złamane narzędzie",
+          "category": "narzedzie"
+        },
+        {
+          "id": "tool-setting-exceeds",
+          "phrases": ["setting value exceeds error", "setting value exceeds"],
+          "shortText": "Narzędzie – pomiar poza tolerancją",
+          "category": "narzedzie",
+          "priority": 65
+        },
+        {
+          "id": "spindle",
+          "phrases": ["spindle"],
+          "shortText": "Wrzeciono",
+          "category": "restart"
+        },
+        {
+          "id": "emergency",
+          "pattern": "emergency|e[ -]?stop",
+          "shortText": "Stop awaryjny",
+          "category": "restart",
+          "priority": 95
+        },
+        {
+          "id": "door",
+          "phrases": ["door"],
+          "shortText": "Otwarte drzwi",
+          "category": "inny"
+        },
+        {
+          "id": "air-pressure",
+          "pattern": "air pressure|pneumatic",
+          "shortText": "Ciśnienie powietrza",
+          "category": "inny",
+          "priority": 85
+        },
+        {
+          "id": "limit",
+          "pattern": "limit|over travel|overtravel",
+          "shortText": "Przekroczony zakres osi",
+          "category": "restart",
+          "priority": 60
+        }
+      ]
+    },
+
+    "aidite5x": {
+      "name": "520",
+      "description": "HMI Aidite 5X V3.34 (maszyny 520). Lista producenta „520 bledy.pdf” (62 pozycje) jako reguły na treści + komunikaty zmierzone na natywnych klatkach z hali.",
+      "codeIdPrefix": "aidite5x-",
+      "codes": [],
+      "rules": [
+        {"id": "aidite5x-servo", "pattern": "servo", "phrases": ["feed shaft servo alarm"], "maxDistance": 2, "shortText": "Serwonapęd osi — alarm (uruchom maszynę ponownie)", "category": "restart", "priority": 90},
+        {"id": "aidite5x-milling-fluid-flow", "pattern": "fluid\\s+flow", "phrases": ["milling fluid flow", "cutting fluid flow"], "maxDistance": 2, "shortText": "Przepływ płynu obróbkowego — sprawdź poziom i pompę", "category": "inny", "priority": 70},
+        {"id": "aidite5x-milling-fluid", "phrases": ["milling fluid is abnormal", "milling fluid", "cutting fluid is abnormal", "cutting fluid"], "maxDistance": 2, "shortText": "Płyn obróbkowy — praca wstrzymana", "category": "inny", "priority": 70},
+        {"id": "aidite5x-tool-life", "pattern": "tool\\s+life|life\\s+(arrives|was\\s+reached|reached)", "phrases": ["tool life was reached", "tool life", "life arrives"], "maxDistance": 2, "shortText": "Zużyte narzędzie — wymień narzędzie", "category": "narzedzie", "priority": 65},
+        {"id": "aidite5x-door", "pattern": "(security|safety)\\s+door", "phrases": ["security door is not closed", "safety door is not closed"], "maxDistance": 2, "shortText": "Otwarte drzwi bezpieczeństwa — zamknij i wciśnij Start", "category": "inny", "priority": 75},
+        {"id": "aidite5x-m-code-waiting", "pattern": "\\bm\\s*code\\s+waiting", "phrases": ["m code waiting"], "maxDistance": 2, "shortText": "Czeka na ciśnienie powietrza (zmiana narzędzia)", "category": "inny", "priority": 80},
+        {"id": "aidite5x-air-pressure", "pattern": "air\\s+pressure|air\\s+compressor", "phrases": ["external air pressure", "insufficient air pressure"], "maxDistance": 2, "shortText": "Brak lub za niskie ciśnienie powietrza", "category": "inny", "priority": 85},
+        {"id": "aidite5x-spindle-inverter", "pattern": "inverter|frequency\\s+converter", "phrases": ["spindle inverter alarm"], "maxDistance": 2, "shortText": "Falownik wrzeciona — alarm", "category": "restart", "priority": 85},
+        {"id": "aidite5x-clamp-spindle", "pattern": "prohibit\\s+the\\s+clip|clip\\s+is\\s+let\\s+open|\\bclamp", "phrases": ["prohibit the clip", "clip is let open"], "maxDistance": 2, "shortText": "Zacisk narzędzia przy obrotach wrzeciona — sprawdź zacisk", "category": "narzedzie", "priority": 70},
+        {"id": "aidite5x-measurement-axis-load", "pattern": "automatic\\s+measurement|axis\\s+load", "phrases": ["automatic measurement", "excessive axis load"], "maxDistance": 2, "shortText": "Pomiar automatyczny — za duże obciążenie osi", "category": "restart", "priority": 75},
+        {"id": "aidite5x-tool-setter-stroke", "pattern": "\\bstroke\\b", "phrases": ["stroke over the knife instrument", "stroke over the tool setter"], "maxDistance": 2, "shortText": "Przekroczony skok czujnika długości narzędzia", "category": "narzedzie", "priority": 70},
+        {"id": "aidite5x-tool-setter-triggered", "pattern": "is\\s+triggered\\s+when", "phrases": ["is triggered when it is enabled", "triggered when the instrument is enabled"], "maxDistance": 2, "shortText": "Czujnik długości narzędzia wyzwolony — usterka sygnału", "category": "narzedzie", "priority": 70},
+        {"id": "aidite5x-tool-setter-dirty", "pattern": "continuous\\s+measurement|\\bdirty\\b", "phrases": ["continuous measurement error"], "maxDistance": 2, "shortText": "Niestabilny pomiar długości narzędzia — wyczyść czujnik", "category": "narzedzie", "priority": 65},
+        {"id": "aidite5x-before-using", "pattern": "before\\s+using\\s+(the\\s+)?machi\\s*ne", "phrases": ["before using the machine", "before using machine"], "maxDistance": 1, "shortText": "Przypomnienie przed pracą (M024.01) — bez alarmu", "category": "bez alarmu", "priority": 0},
+        {"id": "aidite5x-maint-clean", "pattern": "clean\\s+and\\s+maintain", "phrases": ["please clean and maintain the machine"], "maxDistance": 2, "shortText": "Przypomnienie: wyczyść i zakonserwuj maszynę", "category": "inny", "priority": 20},
+        {"id": "aidite5x-maint-spindle", "pattern": "maintenance\\s+spindle|spindle\\s+maintenance", "phrases": ["maintenance spindle"], "maxDistance": 2, "shortText": "Przypomnienie: konserwacja wrzeciona", "category": "inny", "priority": 20},
+        {"id": "aidite5x-maint-guide-rail", "pattern": "guide\\s+rail|lubricat", "phrases": ["clean the wire rod guide rail"], "maxDistance": 2, "shortText": "Przypomnienie: wyczyść prowadnice i nasmaruj", "category": "inny", "priority": 20},
+        {"id": "aidite5x-maint-calibrate", "pattern": "calibrate\\s+the\\s+machine", "phrases": ["calibrate the machine"], "maxDistance": 2, "shortText": "Przypomnienie: skalibruj maszynę", "category": "inny", "priority": 20},
+        {"id": "aidite5x-calibration-done", "pattern": "correction\\s+is\\s+complete|calibration\\s+(is\\s+)?complete", "phrases": ["automatic correction is complete"], "maxDistance": 2, "shortText": "Kalibracja zakończona — zresetuj, zdejmij sondę i płytkę", "category": "inny", "priority": 10},
+        {"id": "aidite5x-calibration-t0", "pattern": "before\\s+performing\\s+the\\s+automatic|empty\\s+(knife|tool)\\s+state", "phrases": ["empty knife state"], "maxDistance": 2, "shortText": "Kalibracja: we wrzecionie ma być puste T0", "category": "narzedzie", "priority": 60},
+        {"id": "aidite5x-calibration", "pattern": "automatic(ally)?\\s+correct|calibration|\\bprobe\\b|deviation|coordinate\\s+system|two\\s+detection\\s+errors", "phrases": ["automatic correction", "probe trigger signal", "detection errors are too large", "deviation is too large", "correct for file errors"], "maxDistance": 2, "shortText": "Automatyczna kalibracja — błąd; przerwij i sprawdź sondę", "category": "inny", "priority": 60},
+        {"id": "aidite5x-b-axis", "pattern": "\\bb\\s+axis\\s+position", "phrases": ["b axis position is abnormal"], "maxDistance": 2, "shortText": "Oś B w złym położeniu — ustaw poziomo i zbazuj", "category": "restart", "priority": 70},
+        {"id": "aidite5x-not-homed", "pattern": "return\\s+to\\s+zero", "phrases": ["does not return to zero"], "maxDistance": 2, "shortText": "Osie niezbazowane — wykonaj bazowanie", "category": "restart", "priority": 55},
+        {"id": "aidite5x-z-soft-limit", "pattern": "soft\\s+limit", "phrases": ["positive soft limit"], "maxDistance": 2, "shortText": "Przekroczony limit programowy osi Z — skontaktuj się z producentem", "category": "restart", "priority": 70},
+        {"id": "aidite5x-tool-too-long", "pattern": "longest\\s+(knife|tool)\\s+length|exposed\\s+length|measured\\s+longer|too\\s+long", "phrases": ["measured longer than", "greater than the set longest"], "maxDistance": 2, "shortText": "Narzędzie za długie — sprawdź wysunięcie lub wymień", "category": "narzedzie", "priority": 70},
+        {"id": "aidite5x-tool-too-short", "pattern": "minimum\\s+(knife|tool)\\s+length|less\\s+than\\s+the\\s+set\\s+minimum|too\\s+short", "phrases": ["less than the set minimum", "minimum tool length", "minimum knife length"], "maxDistance": 1, "shortText": "Zmierzone narzędzie za krótkie — sprawdź/wymień narzędzie", "category": "narzedzie", "priority": 70},
+        {"id": "aidite5x-tool-broken", "pattern": "worn\\s+or\\s+broken|broken\\s+(knife|tool)|no\\s+detection\\s+signal|compensation\\s+table", "phrases": ["may have been worn or broken", "no detection signal detected"], "maxDistance": 2, "shortText": "Narzędzie zużyte lub złamane — wymień", "category": "narzedzie", "priority": 70},
+        {"id": "aidite5x-tool-number", "pattern": "(knife|tool)\\s+number|\\bt\\s+instruction|illegal\\s+number|valid\\s+range", "phrases": ["knife number is not in the range", "tool number is not in the range", "illegal number was detected"], "maxDistance": 2, "shortText": "Błędny numer narzędzia — sprawdź program i magazyn", "category": "narzedzie", "priority": 65},
+        {"id": "aidite5x-magazine", "pattern": "(knife|tool)\\s+(library|magazine)|(?<!\\bbin\\s+and\\s+)(knife|tool)\\s+bank|retreat\\s+amount|empty\\s+(knife|tool)|length\\s+of\\s+the\\s+base", "phrases": ["the empty knife is abnormal", "retreat amount is too small"], "maxDistance": 2, "shortText": "Magazyn narzędzi — błąd; zresetuj magazyn", "category": "narzedzie", "priority": 65},
+        {"id": "aidite5x-tool-length", "pattern": "actual\\s+measured\\s+(knife|tool)\\s+length", "phrases": ["actual measured tool length", "actual measured knife length"], "maxDistance": 2, "shortText": "Zmierzona długość narzędzia poza zakresem — sprawdź/wymień narzędzie", "category": "narzedzie", "priority": 65}
+      ]
+    },
+
+    "amm580": {
+      "name": "580",
+      "description": "Maszyna 580 (RealVNC Server, ekran 800x600, pasek alarmu u góry). Lista producenta „580 BLEDY.pdf” (32 pozycje bez numerów) jako reguły na treści + komunikat zmierzony na natywnej klatce.",
+      "codeIdPrefix": "amm580-",
+      "codes": [],
+      "rules": [
+        {"id": "amm580-servo", "pattern": "servo", "phrases": ["feed shaft servo alarm"], "maxDistance": 2, "shortText": "Serwonapęd osi — alarm (uruchom maszynę ponownie)", "category": "restart", "priority": 90},
+        {"id": "amm580-tool-life", "pattern": "tool\\s+life|life\\s+(arrives|was\\s+reached|reached)", "phrases": ["tool life was reached", "tool life", "life arrives"], "maxDistance": 1, "shortText": "Zużyte narzędzie (Tool life) — bez alarmu", "category": "bez alarmu", "priority": 0},
+        {"id": "amm580-door", "pattern": "(security|safety)\\s+door", "phrases": ["security door is not closed", "safety door is not closed"], "maxDistance": 2, "shortText": "Otwarte drzwi bezpieczeństwa — zamknij i wciśnij Start", "category": "inny", "priority": 75},
+        {"id": "amm580-m-code-waiting", "pattern": "\\bm\\s*code\\s+waiting", "phrases": ["m code waiting"], "maxDistance": 2, "shortText": "Czeka na ciśnienie powietrza (zmiana narzędzia)", "category": "inny", "priority": 80},
+        {"id": "amm580-air-pressure", "pattern": "air\\s+pressure|air\\s+compressor", "phrases": ["external air pressure", "insufficient air pressure"], "maxDistance": 2, "shortText": "Brak lub za niskie ciśnienie powietrza", "category": "inny", "priority": 85},
+        {"id": "amm580-spindle-inverter", "pattern": "inverter|frequency\\s+converter", "phrases": ["spindle inverter alarm"], "maxDistance": 2, "shortText": "Falownik wrzeciona — alarm", "category": "restart", "priority": 85},
+        {"id": "amm580-tool-setter-stroke", "pattern": "\\bstroke\\b", "phrases": ["stroke over the knife instrument", "stroke over the tool setter"], "maxDistance": 2, "shortText": "Przekroczony skok czujnika długości narzędzia", "category": "narzedzie", "priority": 70},
+        {"id": "amm580-tool-setter-triggered", "pattern": "is\\s+triggered\\s+when", "phrases": ["is triggered when it is enabled", "triggered when the instrument is enabled"], "maxDistance": 2, "shortText": "Czujnik długości narzędzia wyzwolony — usterka sygnału", "category": "narzedzie", "priority": 70},
+        {"id": "amm580-tool-setter-dirty", "pattern": "continuous\\s+measurement|\\bdirty\\b", "phrases": ["continuous measurement error"], "maxDistance": 2, "shortText": "Niestabilny pomiar długości narzędzia — wyczyść czujnik", "category": "narzedzie", "priority": 65},
+        {"id": "amm580-maint-clean", "pattern": "clean\\s+and\\s+maintain|clean\\s+the\\s+bin|vacuum\\s+cleaner", "phrases": ["please clean and maintain the machine"], "maxDistance": 2, "shortText": "Przypomnienie: wyczyść i zakonserwuj maszynę", "category": "inny", "priority": 20},
+        {"id": "amm580-not-homed", "pattern": "return\\s+to\\s+zero", "phrases": ["does not return to zero"], "maxDistance": 2, "shortText": "Osie niezbazowane — wykonaj bazowanie", "category": "restart", "priority": 55},
+        {"id": "amm580-z-soft-limit", "pattern": "soft\\s+limit", "phrases": ["positive soft limit"], "maxDistance": 2, "shortText": "Przekroczony limit programowy osi Z — skontaktuj się z producentem", "category": "restart", "priority": 70},
+        {"id": "amm580-tool-too-long", "pattern": "longest\\s+(knife|tool)\\s+length|exposed\\s+length|measured\\s+longer|too\\s+long", "phrases": ["measured longer than", "greater than the set longest"], "maxDistance": 2, "shortText": "Narzędzie za długie — sprawdź wysunięcie lub wymień", "category": "narzedzie", "priority": 70},
+        {"id": "amm580-tool-broken", "pattern": "worn\\s+or\\s+broken|broken\\s+(knife|tool)|no\\s+detection\\s+signal|compensation\\s+table", "phrases": ["may have been worn or broken", "no detection signal detected"], "maxDistance": 2, "shortText": "Narzędzie zużyte lub złamane — wymień", "category": "narzedzie", "priority": 70},
+        {"id": "amm580-tool-number", "pattern": "(knife|tool)\\s+number|\\bt\\s+instruction|illegal\\s+number|valid\\s+range", "phrases": ["knife number is not in the range", "tool number is not in the range", "illegal number was detected"], "maxDistance": 2, "shortText": "Błędny numer narzędzia — sprawdź program i magazyn", "category": "narzedzie", "priority": 65},
+        {"id": "amm580-magazine", "pattern": "(knife|tool)\\s+(bank|library|magazine)|retreat\\s+amount|empty\\s+(knife|tool)|length\\s+of\\s+the\\s+base", "phrases": ["the empty knife is abnormal", "retreat amount is too small"], "maxDistance": 2, "shortText": "Magazyn narzędzi — błąd; zresetuj magazyn", "category": "narzedzie", "priority": 65}
+      ]
+    },
+
+    "cameo1": {
+      "name": "Cameo 1",
+      "description": "HMI Aidite V2.14 (192.168.1.111; wg zdjęcia maszyny frezarka AMW-400). Brak listy producenta i brak odczytanego komunikatu — baza pusta do pierwszego prawdziwego alarmu.",
+      "codeIdPrefix": "cameo1-",
+      "codes": [],
+      "rules": []
+    },
+    "premile": {
+      "name": "Premile",
+      "description": "HMI Aidite 4X V3.43 (192.168.1.114). Brak listy producenta i brak odczytanego komunikatu — baza pusta do pierwszego prawdziwego alarmu.",
+      "codeIdPrefix": "premile-",
+      "codes": [],
+      "rules": []
+    }
+  },
+
+  // ---- Listy WSPÓLNE ------------------------------------------------------------------------------
+  "codes": [],
+  "rules": []
+}

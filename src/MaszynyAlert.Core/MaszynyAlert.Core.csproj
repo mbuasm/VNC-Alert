@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>MaszynyAlert.Core</RootNamespace>
+    <AssemblyName>MaszynyAlert.Core</AssemblyName>
+    <Description>Rdzeń Maszyny-alert: klient RFB (tylko odczyt), detekcja czerwieni, reguły, alerty, klaster UDP. Bez zależności od Windows.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="MaszynyAlert.Core.Tests" />
+    <InternalsVisibleTo Include="MaszynyAlert.Rfb.Tests" />
+    <!-- MaszynyAlert.Probe.Tests kompiluje u siebie fałszywy serwer z Fakes/ (patrz jego csproj), a ten
+         używa wewnętrznego RsaAesStream — bez tego wpisu nie dałoby się sprawdzić logowania probe.exe
+         do serwera RSA-AES na pętli zwrotnej. -->
+    <InternalsVisibleTo Include="MaszynyAlert.Probe.Tests" />
+  </ItemGroup>
+
+</Project>

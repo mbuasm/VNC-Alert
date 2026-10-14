@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <RootNamespace>MaszynyAlert.App</RootNamespace>
+    <AssemblyName>MaszynyAlert.App</AssemblyName>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\VncAlert.ico</ApplicationIcon>
+    <SelfContained>false</SelfContained>
+    <PublishSingleFile>false</PublishSingleFile>
+    <Description>VNC Alert – monitor błędów frezarek Aidite (aplikacja w zasobniku).</Description>
+    <AssemblyTitle>VNC Alert</AssemblyTitle>
+    <!-- WFO0003 (analizator WinForms) każe przenieść ustawienia wysokiego DPI z app.manifest do
+         Application.SetHighDpiMode / ApplicationHighDpiMode. Tu jest to NIEWŁAŚCIWA rada: to aplikacja
+         WPF (WinForms służy tylko ikonie w zasobniku), a WPF musi znać świadomość DPI już w momencie
+         startu procesu — z manifestu; wspomniane API dotyczy wyłącznie okien WinForms i okna alertu by
+         nie naprawiło. Zostawiamy dpiAware/dpiAwareness w manifeście świadomie. -->
+    <NoWarn>$(NoWarn);WFO0003</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Punkt wejścia jest w Program.cs (Generic Host + WPF na tym samym wątku STA) — App.xaml nie generuje
+         własnego Main(), więc jest traktowane jak zwykła strona XAML, nie jak ApplicationDefinition. -->
+    <ApplicationDefinition Remove="App.xaml" />
+    <Page Include="App.xaml" />
+    <Resource Include="Assets\VncAlert.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MaszynyAlert.Core\MaszynyAlert.Core.csproj" />
+    <ProjectReference Include="..\MaszynyAlert.Windows\MaszynyAlert.Windows.csproj" />
+    <ProjectReference Include="..\MaszynyAlert.Export\MaszynyAlert.Export.csproj" />
+    <!-- Czyste funkcje w klasach wewnętrznych warstwy App (np. WindowPlacement) mają testy jednostkowe. -->
+    <InternalsVisibleTo Include="MaszynyAlert.App.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="9.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Pliki dołączane do katalogu wyjściowego/publikacji (wersja testowa działa z jednego folderu). -->
+    <None Include="..\..\config\config.example.json" Link="config.example.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\config\rules.example.json" Link="rules.example.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\sounds\alarm.wav" Link="sounds\alarm.wav" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\sounds\idle-ping.wav" Link="sounds\idle-ping.wav" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Komenda "vncalert killapp" musi leżeć obok EXE: w paczce portable i w katalogu instalacji. -->
+    <None Include="vncalert.cmd" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Licencje bibliotek firm trzecich (MIT + Apache-2.0: SixLabors.Fonts, Serilog) — Apache-2.0 wymaga dołączenia tekstu licencji
+         do dystrybucji. Leży obok EXE w paczce i w katalogu instalacji (instalator kopiuje cały publish\app\*). Nowy pakiet = nowy wiersz. -->
+    <None Include="LICENSES-THIRD-PARTY.txt" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

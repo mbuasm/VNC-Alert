@@ -1,0 +1,18 @@
+<Window Style="{StaticResource {x:Type Window}}" x:Class="MaszynyAlert.App.Views.ScreenPreviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="VNC Alert — podgląd ekranu"
+        Width="900" Height="700"
+        WindowStartupLocation="CenterOwner"
+        Background="Black">
+    <DockPanel Margin="8">
+        <WrapPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+            <Button x:Name="RefreshButton" Content="Odśwież" Padding="10,4" Click="RefreshButton_Click" />
+            <Button x:Name="CloseButton" Content="Zamknij" Padding="10,4" Margin="8,0,0,0" Click="CloseButton_Click" />
+            <TextBlock x:Name="StatusText" VerticalAlignment="Center" Margin="16,4,0,0" Foreground="#CCCCCC" TextWrapping="Wrap" MaxWidth="620" />
+        </WrapPanel>
+        <Border BorderBrush="#444444" BorderThickness="1">
+            <Image x:Name="PreviewImage" Stretch="Uniform" />
+        </Border>
+    </DockPanel>
+</Window>

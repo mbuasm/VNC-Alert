@@ -1,0 +1,262 @@
+{
+ "source": "580 BLEDY.pdf (skan, 4 strony = s. 38–41 instrukcji, rozdz. V „Fault code and troubleshooting”), od użytkownika 25.09.2026",
+ "transcribed": "przepis 1:1 z obrazów stron, literówki producenta zachowane; instrukcja 580 nie podaje numerów kodów",
+ "rows": [
+  {
+   "page": 1,
+   "manualPage": "38 | Aidite",
+   "content": "M code waiting",
+   "reason": "1. Forced pressure detection of pine knife in the process of automatic knife change: the external air pressure does not reach the pressure of pine knife. 2. Air pressure sensor fault",
+   "exclusion": "1. Check the external input air pressure. After the pressure reaches the required value, the machine will automatically continue to run without manual operation. 2. Check the working state of the air pressure sensor",
+   "rule": "amm580-m-code-waiting"
+  },
+  {
+   "page": 1,
+   "manualPage": "38 | Aidite",
+   "content": "Alarm for the stroke over the knife instrument",
+   "reason": "1, the tool front end exposed length is too long; 2. Fof of instrument knife instrument",
+   "exclusion": "1. Reset the system, manually move the Z axis in the positive direction in manual mode, loosen the spindle clamlet and replace the tool. 2. Enter the parameter mode. In IO monitoring, manually press the instrument to see whether the induction signal of the instrument is normal, such as abnormal replacement",
+   "rule": "amm580-tool-setter-stroke"
+  },
+  {
+   "page": 1,
+   "manualPage": "38 | Aidite",
+   "content": "Without the external air pressure, the machine forces the stop of operation",
+   "reason": "Without the external air pressure input, the machine is forced to stop working to protect the air-cooled spindle",
+   "exclusion": "Check whether the air compressor or air pressure line is abnormal",
+   "rule": "amm580-air-pressure"
+  },
+  {
+   "page": 1,
+   "manualPage": "38 | Aidite",
+   "content": "Spindle inverter alarm",
+   "reason": "Spindle inverter failure",
+   "exclusion": "First, turn off the machine, boot again in 20 seconds, enter the manual screen, and rotate the spindle. If the alarm is not cleared, open the back cover, check the fault code of the frequency converter to take a picture and send it to the manufacturer",
+   "rule": "amm580-spindle-inverter"
+  },
+  {
+   "page": 1,
+   "manualPage": "38 | Aidite",
+   "content": "The instrument is triggered when the instrument is enabled",
+   "reason": "Fault on the knife instrument signal",
+   "exclusion": "Replace the knife instrument",
+   "rule": "amm580-tool-setter-triggered"
+  },
+  {
+   "page": 2,
+   "manualPage": "Aidite | 39",
+   "content": "The security door is not closed and the processing has been suspended. Please close the security door and click the start button to continue the processing",
+   "reason": "1. The security door is not closed. 2, the security door lock switch failure",
+   "exclusion": "1. Close the safety door 2. replace the security door lock",
+   "rule": "amm580-door"
+  },
+  {
+   "page": 2,
+   "manualPage": "Aidite | 39",
+   "content": "T1 life arrives, replace the T1 tool",
+   "reason": "The T 1 tool life reaches the warning",
+   "exclusion": "Change a new T 1 tool, the tool life management interface to reset the tool.",
+   "rule": "amm580-tool-life"
+  },
+  {
+   "page": 2,
+   "manualPage": "Aidite | 39",
+   "content": "When the T 2 life arrives, please replace the T 2 tool",
+   "reason": "The T 2 tool life reaches the warning",
+   "exclusion": "Replace a new T 2 tool, the tool life management interface to reset the tool.",
+   "rule": "amm580-tool-life"
+  },
+  {
+   "page": 2,
+   "manualPage": "Aidite | 39",
+   "content": "T 3 life arrives, replace the T 3 tool",
+   "reason": "The T 3 tool life reaches the warning",
+   "exclusion": "Change a new T 3 tool, the tool life management interface to reset the tool.",
+   "rule": "amm580-tool-life"
+  },
+  {
+   "page": 2,
+   "manualPage": "Aidite | 39",
+   "content": "When the T 4 life arrives, please replace the T 4 tool",
+   "reason": "The T 4 tool life reaches the warning",
+   "exclusion": "Replace a new T 4 tool, the tool life management interface to reset the tool.",
+   "rule": "amm580-tool-life"
+  },
+  {
+   "page": 2,
+   "manualPage": "Aidite | 39",
+   "content": "When the T 5 life arrives, please replace the T 5 tool",
+   "reason": "The T 5 tool life reaches the warning",
+   "exclusion": "Change a new T 5 tool, the tool life management interface to reset the tool.",
+   "rule": "amm580-tool-life"
+  },
+  {
+   "page": 2,
+   "manualPage": "Aidite | 39",
+   "content": "When the T 6 life arrives, please replace the T 6 tool",
+   "reason": "The T 6 tool life reaches the warning",
+   "exclusion": "Replace a new T 6 tool, the tool life management interface to reset the tool.",
+   "rule": "amm580-tool-life"
+  },
+  {
+   "page": 2,
+   "manualPage": "Aidite | 39",
+   "content": "When the T 7 life arrives, please replace the T 7 tool",
+   "reason": "The T 7 tool life reaches the warning",
+   "exclusion": "Change a new T 7 tool, the tool life management interface to reset the tool.",
+   "rule": "amm580-tool-life"
+  },
+  {
+   "page": 2,
+   "manualPage": "Aidite | 39",
+   "content": "When the T 8 life arrives, please replace the T 8 tool",
+   "reason": "The T 8 tool life reaches the warning",
+   "exclusion": "Replace a new T 8 tool, the tool life management interface to reset the tool.",
+   "rule": "amm580-tool-life"
+  },
+  {
+   "page": 3,
+   "manualPage": "40 | Aidite",
+   "content": "Please clean and maintain the machine",
+   "reason": "Cleaning and maintenance machine warning warning",
+   "exclusion": "After the cleaning cycle set by the user (default 72 hours) arrives, there will be cleaning and maintenance tips after the startup returns to zero. Please clean the machine and reset the machine to restart the cleaning cycle.",
+   "rule": "amm580-maint-clean"
+  },
+  {
+   "page": 3,
+   "manualPage": "40 | Aidite",
+   "content": "Insufficient external air pressure pressure",
+   "reason": "Insufficient external air pressure input pressure",
+   "exclusion": "Check whether the air compressor or air pressure line is abnormal",
+   "rule": "amm580-air-pressure"
+  },
+  {
+   "page": 3,
+   "manualPage": "40 | Aidite",
+   "content": "llegal illegal number was detected in the knife",
+   "reason": "The knife bank is abnormal",
+   "exclusion": "Reset the knife bank",
+   "rule": "amm580-tool-number"
+  },
+  {
+   "page": 3,
+   "manualPage": "40 | Aidite",
+   "content": "The Z coordinate value of the knife point ([longest knife length] plus [safe distance]) exceeds the Z positive soft limit",
+   "reason": "The knife bank is abnormal",
+   "exclusion": "Contact equipment manufacturer",
+   "rule": "amm580-z-soft-limit"
+  },
+  {
+   "page": 3,
+   "manualPage": "40 | Aidite",
+   "content": "The entered T instruction is not in the valid range [only 1~69]",
+   "reason": "T instruction error",
+   "exclusion": "Check the tool number value of the CAM software.",
+   "rule": "amm580-tool-number"
+  },
+  {
+   "page": 3,
+   "manualPage": "40 | Aidite",
+   "content": "The XYZ axis does not return to zero, so the blade length measurement cannot be made",
+   "reason": "The machine did not return to zero",
+   "exclusion": "Back to zero operation",
+   "rule": "amm580-not-homed"
+  },
+  {
+   "page": 3,
+   "manualPage": "40 | Aidite",
+   "content": "The current knife number of the spindle is inconsistent with the specified measuring knife number",
+   "reason": "The knife bank is abnormal",
+   "exclusion": "Reset the knife bank",
+   "rule": "amm580-tool-number"
+  },
+  {
+   "page": 3,
+   "manualPage": "40 | Aidite",
+   "content": "The continuous measurement error of the knife length is too large, which may be dirty to the knife instrument",
+   "reason": "The knife instrument needs to be cleaned or faulty",
+   "exclusion": "Detection of the knife instrument",
+   "rule": "amm580-tool-setter-dirty"
+  },
+  {
+   "page": 3,
+   "manualPage": "40 | Aidite",
+   "content": "Touching the instrument while moving quickly, it may be measured longer than [longest knife length]",
+   "reason": "The tool is too long",
+   "exclusion": "Check the knife length",
+   "rule": "amm580-tool-too-long"
+  },
+  {
+   "page": 3,
+   "manualPage": "40 | Aidite",
+   "content": "The knife instrument has been touched before the slow detection, and the [retreat amount] is too small",
+   "reason": "The knife bank is abnormal",
+   "exclusion": "Reset the knife bank",
+   "rule": "amm580-magazine"
+  },
+  {
+   "page": 4,
+   "manualPage": "Aidite | 41",
+   "content": "The difference between the knife length and the system knife length is out of range and may have been worn or broken",
+   "reason": "Broken broken or broken knife",
+   "exclusion": "Change the knife",
+   "rule": "amm580-tool-broken"
+  },
+  {
+   "page": 4,
+   "manualPage": "Aidite | 41",
+   "content": "No detection signal detected, may be broken or invalid to the knife signal",
+   "reason": "Broken broken or broken knife",
+   "exclusion": "Change the knife",
+   "rule": "amm580-tool-broken"
+  },
+  {
+   "page": 4,
+   "manualPage": "Aidite | 41",
+   "content": "The value of the long compensation table deviates greatly from the detection value of broken knife, please update the detection value of broken knife",
+   "reason": "Broken broken or broken knife",
+   "exclusion": "Change the knife",
+   "rule": "amm580-tool-broken"
+  },
+  {
+   "page": 4,
+   "manualPage": "Aidite | 41",
+   "content": "The empty knife is abnormal and may fail",
+   "reason": "The knife bank is abnormal",
+   "exclusion": "Reset the edge of the store to check the tool on the store",
+   "rule": "amm580-magazine"
+  },
+  {
+   "page": 4,
+   "manualPage": "Aidite | 41",
+   "content": "The instruction knife number is not in the range T 0 to T 8",
+   "reason": "Enter the wrong knife change instruction",
+   "exclusion": "Check the input knife change instruction",
+   "rule": "amm580-tool-number"
+  },
+  {
+   "page": 4,
+   "manualPage": "Aidite | 41",
+   "content": "The current knife number is not in the range T 0 to T 8",
+   "reason": "The current knife number is wrong",
+   "exclusion": "Reset the knife bank",
+   "rule": "amm580-tool-number"
+  },
+  {
+   "page": 4,
+   "manualPage": "Aidite | 41",
+   "content": "The actual measured tool length is greater than the set longest knife length",
+   "reason": "The tool exposed length exceeds the allowable length",
+   "exclusion": "Stop the current machining, replace the tool, and then reprocess",
+   "rule": "amm580-tool-too-long"
+  },
+  {
+   "page": 4,
+   "manualPage": "Aidite | 41",
+   "content": "Feed shaft servo alarm",
+   "reason": "Servo drive alarm",
+   "exclusion": "In automatic mode, reset the machine, clear the alarm, close the machine and restart in 20 seconds, the alarm will automatically clear. After you restart the machine, if the alarm is not cleared, take the servo alarm code content on the interface and send it to the manufacturer.",
+   "rule": "amm580-servo"
+  }
+ ]
+}

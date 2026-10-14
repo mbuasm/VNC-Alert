@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 1,
+  "description": "Natywne wycinki dolnego paska stanu 520 (profil aidite5x, statusBarRoi 35,709,954,48 z klatki 1024x768 prosto z VNC) zapisane przez program w chwili otwarcia epizodu czerwieni (captures/amm520-1_<data>-<godzina>_blad.png). Material do pomiaru OCR tekstu NAPISANEGO NA kolorowym polu: bialy tekst na czerwonym polu RGB(255,48,0) i czarny na zoltym RGB(255,255,0).",
+  "source": "Eksport diagnostyki stanowiska 520/580 MaszynyAlert-diagnostyka-20260925-104135-d771e2c4 (captures/, logs/app-20260925.log, status.json).",
+  "machine": "amm520-1 (\"520 akrony\")",
+  "ocrEngineOnStation": "Windows OCR en-US (status.json: ocr.languageTag = en-US; program wybral en-US, bo pakiet byl zainstalowany)",
+  "hmiClockNote": "Zegar HMI jest ok. 55 min 49 s za zegarem komputera: plik 09:38:50 pokazuje na pasku 08:43:01.",
+  "ocrLogNote": "Pole ocrLog to DOSLOWNY tekst z linii „Maszyna 'amm520-1': OCR surowy: '…'” pierwszego odczytu po otwarciu epizodu (ta sama sekunda albo do 2 s po zapisie wycinka) — to tekst wybrany przez MachineMonitor.ReadErrorAsync (maska czerwieni, a gdy bez reguly — drugie podejscie PrepareTextForOcr). Prefiks „… ” to TextTruncation.MarkIfCut. ocrLogRule = co z tym tekstem zrobila baza aidite5x NA STANOWISKU w tamtej chwili (do ok. 10:05 stanowisko nie mialo jeszcze reguly aidite5x-before-using).",
+  "fieldsNote": "Pola zmierzone skryptem (okno barwy profilu 340-70 st., S >= 0.55, V >= 0.35; obszar spojny, obwiednia >= 16x8 px wypelniona >= 60 %) — te same liczby sprawdza RedFieldTextTests. Wspolrzedne w ukladzie wycinka.",
+  "samples": [
+    {
+      "file": "520-akrony-093850-blad.png",
+      "sha256": "E242D7EA1A3CB95E9A48C0343E8EC588F02D757E107129836312FF7DB3059D8F",
+      "capturedAt": "2026-09-25T09:38:50+02:00",
+      "hmiClock": "2026.09.25 08:43:01",
+      "visible": "EDIT (niebieski na turkusie), zielona plakietka INPUTTING (czarny tekst), ZLOCISTOZOLTE pole RGB(255,214,32) z czarnym tekstem „TIP:ORIGIN NOT REINSTATED”, CODELESS, USB i PROTECT (szare), data i godzina. Drugi wiersz pusty; kursor myszy pod polem.",
+      "fields": [
+        { "bounds": [202, 3, 372, 20], "color": "RGB(255,214,32)", "text": "TIP:ORIGIN NOT REINSTATED", "textColor": "czarny" }
+      ],
+      "ocrLog": "EDIT TIP.ORIGIN NOT REINSTATED CODELESS USB PROTECT 2626. 69. 25",
+      "ocrLogAt": "09:38:50.995",
+      "ocrLogRule": "brak reguly (kolejny komunikat w epizodzie)"
+    },
+    {
+      "file": "520-akrony-093917-blad.png",
+      "sha256": "4DA8D9CBF345CFB190FB229BA255776D0D2657780F04844BA8C873446F5DE812",
+      "capturedAt": "2026-09-25T09:39:17+02:00",
+      "hmiClock": "2026.09.25 08:43:28",
+      "visible": "EDIT w ZOLTEJ plakietce (niebieski tekst, oba wiersze paska), READY, CZERWONE pole z BIALYM tekstem „TIP:M024.01 Before using machine, Please” (uciete przez HMI), AUTO, USB, PROTECT, data i godzina; drugi wiersz: ZOLTE pole z czarnym tekstem „(4/5): [1343]  343 End of TG3 T5 Tool life, Please replace TG3 T5.”",
+      "fields": [
+        { "bounds": [0, 0, 104, 48], "color": "RGB(255,255,0)", "text": "EDIT", "textColor": "niebieski RGB(0,48,205)" },
+        { "bounds": [202, 3, 372, 20], "color": "RGB(255,48,0)", "text": "TIP:M024.01 Before using machine, Please", "textColor": "bialy" },
+        { "bounds": [109, 25, 658, 20], "color": "RGB(255,255,0)", "text": "(4/5): [1343]  343 End of TG3 T5 Tool life, Please replace TG3 T5.", "textColor": "czarny" }
+      ],
+      "ocrLog": "READY TIPtM024. 01 Before EDIT (4/5) [1343] 343 End of TG3 T5 using machine. Please Tool life. Please rep lace AUTO TG3 T5. USB PROTECT 2626. 69. 25",
+      "ocrLogAt": "09:39:19.085",
+      "ocrLogRule": "aidite5x-tool-life (priorytet 65) — silnik przeplotl oba wiersze paska"
+    },
+    {
+      "file": "520-akrony-093930-blad.png",
+      "sha256": "6CFD530B839F8C22CB0A08A823A5DE97A75C310A7A6E8E13FDF5BF934758D72C",
+      "capturedAt": "2026-09-25T09:39:30+02:00",
+      "hmiClock": "2026.09.25 08:43:41",
+      "visible": "EDIT (bez plakietki), READY, CZERWONE pole z BIALYM „TIP:M024.01 Before using machine, Please”, AUTO, USB, PROTECT, data i godzina; drugi wiersz: ZOLTE pole z czarnym „(5/5): [1344]  344 End of TG3 T6 Tool life, Please replace TG3 T6.”",
+      "fields": [
+        { "bounds": [202, 3, 372, 20], "color": "RGB(255,48,0)", "text": "TIP:M024.01 Before using machine, Please", "textColor": "bialy" },
+        { "bounds": [109, 25, 658, 20], "color": "RGB(255,255,0)", "text": "(5/5): [1344]  344 End of TG3 T6 Tool life, Please replace TG3 T6.", "textColor": "czarny" }
+      ],
+      "ocrLog": "READY TIPtM024. 01 Before EDIT (5/5) [1344] 344 End of TG3 T6 using machine. Please Tool life. Please rep lace AUTO TG3 T6. USB PROTECT 2626. 69. 25",
+      "ocrLogAt": "09:39:31.147",
+      "ocrLogRule": "aidite5x-tool-life (priorytet 65)"
+    },
+    {
+      "file": "520-akrony-093951-blad.png",
+      "sha256": "4622F60043829037287874AC0B6B8F0D5D36E94DF03314BAE5FCD0B7C12BA413",
+      "capturedAt": "2026-09-25T09:39:51+02:00",
+      "hmiClock": "2026.09.25 08:44:02",
+      "visible": "EDIT, READY, CZERWONE pole z BIALYM „TIP:M024.01 Before using machine, Please”, AUTO, USB, PROTECT, data i godzina. Drugi wiersz pusty.",
+      "fields": [
+        { "bounds": [202, 3, 372, 20], "color": "RGB(255,48,0)", "text": "TIP:M024.01 Before using machine, Please", "textColor": "bialy" }
+      ],
+      "ocrLog": "EDIT READY M024. 01 Before using machi ne. AUTO USB PROTECT 2626. 69. 25 68",
+      "ocrLogAt": "09:39:52.253",
+      "ocrLogRule": "brak reguly (stanowisko nie mialo jeszcze aidite5x-before-using) — alert „Blad: …”"
+    },
+    {
+      "file": "520-akrony-095746-blad.png",
+      "sha256": "61D54B3AACA46011846CF1A3B224A1346BC6F4F91E60AB9425FB3F0B8C54031E",
+      "capturedAt": "2026-09-25T09:57:46+02:00",
+      "hmiClock": "2026.09.25 09:01:57",
+      "visible": "Jak 093951: EDIT, READY, CZERWONE pole z BIALYM „TIP:M024.01 Before using machine, Please”, AUTO, USB, PROTECT, data i godzina.",
+      "fields": [
+        { "bounds": [202, 3, 372, 20], "color": "RGB(255,48,0)", "text": "TIP:M024.01 Before using machine, Please", "textColor": "bialy" }
+      ],
+      "ocrLog": "EDIT READY TIP. M024. 01 Before using machi ne. ease AUTO PROTECT 2626. 69. 25 157",
+      "ocrLogAt": "09:57:46.872",
+      "ocrLogRule": "brak reguly (stanowisko nie mialo jeszcze aidite5x-before-using)"
+    },
+    {
+      "file": "520-akrony-100508-blad.png",
+      "sha256": "ABEFC98F2E4E52E6BC3CFFFB7E9369310DF89564223AFE695B91792CBF4F7B1C",
+      "capturedAt": "2026-09-25T10:05:08+02:00",
+      "hmiClock": "2026.09.25 09:09:19",
+      "visible": "Jak 093951 (inna godzina na pasku).",
+      "fields": [
+        { "bounds": [202, 3, 372, 20], "color": "RGB(255,48,0)", "text": "TIP:M024.01 Before using machine, Please", "textColor": "bialy" }
+      ],
+      "ocrLog": "EDIT READY TIP. M024. 01 Before using machi ne. ease AUTO PROTECT 2626. 69. 25 69169119",
+      "ocrLogAt": "10:05:08.435",
+      "ocrLogRule": "brak reguly (stanowisko nie mialo jeszcze aidite5x-before-using)"
+    },
+    {
+      "file": "520-akrony-100552-blad.png",
+      "sha256": "8EC0152EE70F70D75E9220495A246DBA0D8347F53CBBE97B47B562FE80940A8C",
+      "capturedAt": "2026-09-25T10:05:52+02:00",
+      "hmiClock": "2026.09.25 09:10:04",
+      "visible": "Jak 093951 (inna godzina na pasku).",
+      "fields": [
+        { "bounds": [202, 3, 372, 20], "color": "RGB(255,48,0)", "text": "TIP:M024.01 Before using machine, Please", "textColor": "bialy" }
+      ],
+      "ocrLog": "EDIT READY TIP. M024. 01 Before using machi ne. ease AUTO PROTECT 2626. 69. 25 69116164",
+      "ocrLogAt": "10:05:53.397",
+      "ocrLogRule": "aidite5x-before-using — „komunikat bez alarmu, alarm wyciszony”"
+    },
+    {
+      "file": "520-akrony-101439-blad.png",
+      "sha256": "30DCA2656CEDE8B464BB714D0B7689364B58CDEBFD10C6B433EFC2B7CBFE5E20",
+      "capturedAt": "2026-09-25T10:14:39+02:00",
+      "hmiClock": "2026.09.25 09:18:51",
+      "visible": "Jak 093951 (inna godzina na pasku).",
+      "fields": [
+        { "bounds": [202, 3, 372, 20], "color": "RGB(255,48,0)", "text": "TIP:M024.01 Before using machine, Please", "textColor": "bialy" }
+      ],
+      "ocrLog": "EDIT READY TIP. M024. 01 Before using machi ne. ease AUTO PROTECT 2626. 69. 25 69118151",
+      "ocrLogAt": "10:14:40.009",
+      "ocrLogRule": "aidite5x-before-using — alarm wyciszony"
+    },
+    {
+      "file": "520-akrony-101955-blad.png",
+      "sha256": "08C4E4ED0856C1E9392D19418918BDFCB3BC54912DCB6039B6D1F867DEB81198",
+      "capturedAt": "2026-09-25T10:19:55+02:00",
+      "hmiClock": "2026.09.25 09:24:07",
+      "visible": "Jak 093951 (inna godzina na pasku).",
+      "fields": [
+        { "bounds": [202, 3, 372, 20], "color": "RGB(255,48,0)", "text": "TIP:M024.01 Before using machine, Please", "textColor": "bialy" }
+      ],
+      "ocrLog": "EDIT READY TIP. M024. 01 Before using machi ne. ease AUTO PROTECT 2626. 69. 25 69124167",
+      "ocrLogAt": "10:19:56.267",
+      "ocrLogRule": "aidite5x-before-using — alarm wyciszony"
+    },
+    {
+      "file": "520-akrony-102008-blad.png",
+      "sha256": "A24ADFB467DA2E12430488A1EDB09E2EC5096C674EE69200881C4FB01730666B",
+      "capturedAt": "2026-09-25T10:20:08+02:00",
+      "hmiClock": "2026.09.25 09:24:20",
+      "visible": "Jak 093951 (inna godzina na pasku).",
+      "fields": [
+        { "bounds": [202, 3, 372, 20], "color": "RGB(255,48,0)", "text": "TIP:M024.01 Before using machine, Please", "textColor": "bialy" }
+      ],
+      "ocrLog": "EDIT READY TIP. M024. 01 Before using machi ne. ease AUTO PROTECT 2626. 69. 25",
+      "ocrLogAt": "10:20:09.327",
+      "ocrLogRule": "aidite5x-before-using — alarm wyciszony"
+    }
+  ],
+  "notInThisFolder": "Zrzut uzytkownika z 25.09.2026 z maszyny „520 szyny” (czerwone pola z BIALYM tekstem „STOPPED” i „[3600] Job_2026-09-24_20-06-39.NC line3000824: The actual measured tool length i…”, opis alertu „Blad: EDIT AUTO USB PROTECT 2626. 69. 25 19164141”) — wycinka z programu nie ma; w testach Core ten uklad odtwarza obraz syntetyczny."
+}

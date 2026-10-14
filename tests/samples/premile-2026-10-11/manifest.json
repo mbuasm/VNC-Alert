@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "machine": "premile",
+  "host": "192.168.1.114",
+  "profile": "premile",
+  "capturedAt": "2026-10-11",
+  "source": "diagnoza hali z PC #2 (DESKTOP-D4DA2OM): probe.exe diagnoza --tryb szybki, 2026-10-11 19:12-19:47, zip diagnoza-hali-PC2-20261011-1911.zip (SHA-256 3424E417C66B49A7530C5095960CDF9EFCA28AB78079357E03B65AAE833BFB8E)",
+  "serverName": "Qt for Embedded Linux VNC Server",
+  "pixelFormat": "16bpp depth 16 RGB565 LE",
+  "hmi": "Aidite 4X V3.43",
+  "note": "Natywne klatki 1024x768 prosto z VNC, bajty bez zmian. Plik *.ocr-pl.json to doslowny zapis Windows OCR (pl) probe.exe dla TEJ klatki. Przez caly przebieg (401 klatek) maszyna stala na zakladce MANUAL - zakladki AUTO tej maszyny NIE zmierzono; bledow nie wywolywano.",
+  "samples": [
+    {
+      "id": "premile-manual-191227",
+      "samplePath": "manual-191227.png",
+      "ocrPath": "manual-191227.ocr-pl.json",
+      "sourceRelativePath": "out/diagnoza/premile/klatki/20261011-191227-0000-start.png",
+      "sha256": "458B4B6EAF221806DDF6F668ECCDDCD5186985FD54E13AAC0BA152EBEE891081",
+      "expectedScreen": "manual",
+      "expectedRed": false,
+      "maxRedFraction": 0.0,
+      "expectedProgressPercent": null,
+      "expectedProgressText": null,
+      "evidence": "Zakladka MANUAL (przyciski osi, T0-T10, WARM, WET CLEAN, PRE-CAL). Pasek stanu w tym samym miejscu co na AUTO 520 i Cameo 1 (EDIT/READY/QUICK) - zero pikseli w oknie barwy; zolte przyciski MANUAL/JOG/PRE-CAL/T0 poza paskiem."
+    },
+    {
+      "id": "premile-manual-194722",
+      "samplePath": "manual-194722.png",
+      "ocrPath": "manual-194722.ocr-pl.json",
+      "sourceRelativePath": "out/diagnoza/premile/klatki/20261011-194722-0400.png",
+      "sha256": "44E9A9E9E9ADB49E454BA5F30EBE07C11AC7765DF6FD663ABFE26BDE3566E49E",
+      "expectedScreen": "manual",
+      "expectedRed": false,
+      "maxRedFraction": 0.0,
+      "expectedProgressPercent": null,
+      "expectedProgressText": null,
+      "evidence": "Ta sama zakladka 35 minut pozniej (zmienia sie tylko zegar HMI)."
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <RootNamespace>MaszynyAlert.Windows</RootNamespace>
+    <AssemblyName>MaszynyAlert.Windows</AssemblyName>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+    <Description>Implementacje zależne od Windows: OCR (Windows.Media.Ocr), DPAPI, autostart, dźwięk.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="MaszynyAlert.Windows.Tests" />
+    <ProjectReference Include="..\MaszynyAlert.Core\MaszynyAlert.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.0" />
+    <PackageReference Include="System.Windows.Extensions" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="10.0.0" />
+  </ItemGroup>
+
+</Project>

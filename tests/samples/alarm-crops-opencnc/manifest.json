@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "sourceArchive": "wycinki okien błędów.zip",
+  "sourceArchiveSha256": "EC008135D03E6AE78197208529BD5659045B75308579D8D7CF139B7B78B12CE0",
+  "samples": [
+    {
+      "file": "aidite1_20260912-114258_blad.png",
+      "sha256": "4AD0BED8571000463EE957E1178A1445E9B7B41BDBBC1EC5953115D46021D426",
+      "machine": "aidite1",
+      "expectedRed": true,
+      "expectedCode": 1200,
+      "expectedShortText": "Bazowanie (Home)",
+      "expectedRedPixels": 1834
+    },
+    {
+      "file": "aidite1_20260913-054055_blad.png",
+      "sha256": "4AD0BED8571000463EE957E1178A1445E9B7B41BDBBC1EC5953115D46021D426",
+      "machine": "aidite1",
+      "expectedRed": true,
+      "expectedCode": 1200,
+      "expectedShortText": "Bazowanie (Home)",
+      "expectedRedPixels": 1834
+    },
+    {
+      "file": "aidite2_20260912-114258_blad.png",
+      "sha256": "4AD0BED8571000463EE957E1178A1445E9B7B41BDBBC1EC5953115D46021D426",
+      "machine": "aidite2",
+      "expectedRed": true,
+      "expectedCode": 1200,
+      "expectedShortText": "Bazowanie (Home)",
+      "expectedRedPixels": 1834
+    },
+    {
+      "file": "aidite2_20260913-054055_blad.png",
+      "sha256": "4AD0BED8571000463EE957E1178A1445E9B7B41BDBBC1EC5953115D46021D426",
+      "machine": "aidite2",
+      "expectedRed": true,
+      "expectedCode": 1200,
+      "expectedShortText": "Bazowanie (Home)",
+      "expectedRedPixels": 1834
+    },
+    {
+      "file": "aidite4_20260912-101027_blad.png",
+      "sha256": "D31A981E0841989C34F5B7CABA20295F1AE00D68EDC485EED911B016EFB1C42B",
+      "machine": "aidite4",
+      "expectedRed": true,
+      "expectedCode": 705,
+      "expectedShortText": "Servo 6",
+      "expectedRedPixels": 1564
+    },
+    {
+      "file": "aidite4_20260912-101033_przerwa.png",
+      "sha256": "1F08E150E54BBD3F55242A5DD76BD62C78DEB42DDDC8F7DCBF21032A9D7A57DA",
+      "machine": "aidite4",
+      "expectedRed": false,
+      "expectedCode": null,
+      "expectedShortText": null,
+      "expectedRedPixels": 0
+    },
+    {
+      "file": "aidite4_20260912-101135_przerwa.png",
+      "sha256": "C897E0E54F0AEAC4F3DA425095BDCEFD82D283AD7FB1014E3C88C41E03D562FE",
+      "machine": "aidite4",
+      "expectedRed": true,
+      "expectedCode": 520,
+      "expectedShortText": "Błąd makra",
+      "expectedRedPixels": 1468
+    },
+    {
+      "file": "aidite4_20260912-101241_przerwa.png",
+      "sha256": "1F08E150E54BBD3F55242A5DD76BD62C78DEB42DDDC8F7DCBF21032A9D7A57DA",
+      "machine": "aidite4",
+      "expectedRed": false,
+      "expectedCode": null,
+      "expectedShortText": null,
+      "expectedRedPixels": 0
+    },
+    {
+      "file": "aidite4_20260912-101356_przerwa.png",
+      "sha256": "1F08E150E54BBD3F55242A5DD76BD62C78DEB42DDDC8F7DCBF21032A9D7A57DA",
+      "machine": "aidite4",
+      "expectedRed": false,
+      "expectedCode": null,
+      "expectedShortText": null,
+      "expectedRedPixels": 0
+    },
+    {
+      "file": "aidite6_20260913-054054_blad.png",
+      "sha256": "21323CD74A76FA0A3D0D7B2F578006B0B296096B4F047E6445F59A863DC9D20F",
+      "machine": "aidite6",
+      "expectedRed": true,
+      "expectedCode": 1248,
+      "expectedShortText": "Tacka nie pobrana",
+      "expectedRedPixels": 1935
+    }
+  ]
+}

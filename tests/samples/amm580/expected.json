@@ -1,0 +1,26 @@
+{
+  "profile": "amm580",
+  "files": {
+    "normal/bialy-tekst.png": {
+      "isRed": false
+    },
+    "normal/pusty-pasek.png": {
+      "isRed": false
+    },
+    "warning/zolty-tekst.png": {
+      "isRed": false
+    },
+    "warning/bursztynowy-tekst.png": {
+      "isRed": false
+    },
+    "error/czerwony-tekst.png": {
+      "isRed": true
+    },
+    "error/ciemnoczerwony-tekst.png": {
+      "isRed": true
+    },
+    "error/czerwony-tekst-inne-tlo.png": {
+      "isRed": true
+    }
+  }
+}

@@ -1,0 +1,43 @@
+TEST "NA SUCHO" — jak wywołać prawdziwy alarm bez czekania na awarię maszyny
+============================================================================
+
+Do czego jest ten folder
+------------------------
+Wrzuć tutaj obraz PNG ze zrzutem ekranu maszyny, nazwany dokladnie tak, jak "id"
+maszyny w pliku config.json, np.:
+
+    aidite2.png
+
+Dla TEJ maszyny program weźmie obraz z tego pliku ZAMIAST prawdziwego podglądu
+VNC — cała reszta (wykrywanie czerwieni, OCR, dopasowanie do słownika rules.json,
+okno alertu, dźwięk w pętli, przycisk "Idę sprawdzić") działa normalnie. Nie
+potrzebujesz do tego ani sieci, ani hasła VNC, ani włączonej maszyny.
+
+Identyfikatory maszyn (kolumna "id" w config.json):
+    aidite1, aidite2, aidite3, aidite4, aidite5, aidite6, aidite7
+
+Jak to zrobić
+-------------
+1. Skopiuj tutaj gotowy zrzut prawdziwego błędu — np. plik z folderu out\bledy\
+   zapisany przez probe.exe (czerwony tekst w niebieskiej ramce u góry ekranu).
+2. Zmień jego nazwę na aidite2.png.
+3. Uruchom MaszynyAlert.App.exe (albo zostaw uruchomiony — plik jest czytany na
+   nowo przy każdym cyklu, nie trzeba restartować programu).
+4. W ciągu 1-2 sekund powinien pojawić się alert z dźwiękiem i polskim opisem
+   błędu. Kliknij "Idę sprawdzić" — alert i dźwięk gasną.
+5. USUŃ plik z tego folderu, żeby maszyna wróciła do prawdziwego podglądu VNC.
+   Dopóki plik tu leży, program NIE patrzy na prawdziwą maszynę!
+
+Chcesz sprawdzić, że program NIE alarmuje bez powodu?
+-----------------------------------------------------
+Wrzuć tu zrzut normalnego ekranu (np. z folderu out\okresowe\ zapisanego przez probe.exe) pod tą
+samą nazwą — alarm ma się NIE pojawić.
+
+Chcesz sprawdzić tylko sam głośnik?
+-----------------------------------
+Nie musisz nic tu wrzucać: prawy klik na ikonę programu w zasobniku (obok zegara,
+czasem pod strzałką "^") -> "Test alarmu (ten komputer)". Zagra dźwięk alarmu
+i pokaże okno alertu, lokalnie, bez maszyn i bez sieci.
+
+Ten plik tekstowy nie przeszkadza programowi — szuka on tylko plików .png o
+nazwach identyfikatorów maszyn.

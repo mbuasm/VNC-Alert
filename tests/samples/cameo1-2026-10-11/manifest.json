@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "machine": "cameo1",
+  "host": "192.168.1.111",
+  "profile": "cameo1",
+  "capturedAt": "2026-10-11",
+  "source": "diagnoza hali z PC #2 (DESKTOP-D4DA2OM): probe.exe diagnoza --tryb szybki, 2026-10-11 19:12-19:47, zip diagnoza-hali-PC2-20261011-1911.zip (SHA-256 3424E417C66B49A7530C5095960CDF9EFCA28AB78079357E03B65AAE833BFB8E)",
+  "serverName": "Qt for Embedded Linux VNC Server",
+  "pixelFormat": "16bpp depth 16 RGB565 LE",
+  "hmi": "Aidite V2.14",
+  "note": "Natywne klatki 1024x768 prosto z VNC, bajty bez zmian. Plik *.ocr-pl.json to doslowny zapis Windows OCR (pl) probe.exe dla TEJ klatki (pelna klatka, slowa z prostokatami). Na 401 klatkach przebiegu maszyna stala na zakladce AUTO po skonczonej pracy; bledow nie wywolywano.",
+  "samples": [
+    {
+      "id": "cameo1-auto-stoi-0-procent-191242",
+      "samplePath": "auto-stoi-0-procent-191242.png",
+      "ocrPath": "auto-stoi-0-procent-191242.ocr-pl.json",
+      "sourceRelativePath": "out/diagnoza/cameo1/klatki/20261011-191242-0003.png",
+      "sha256": "27B091EA712FE4CEC7B7AE68B152BE28A42B3FDBDFEC88271E48AB547F8AB4F6",
+      "expectedScreen": "auto",
+      "expectedRed": false,
+      "maxRedFraction": 0.0,
+      "expectedProgressPercent": 0,
+      "expectedProgressText": "Progress: 0 / 1249333/ 0.00%",
+      "evidence": "Zakladka AUTO po skonczonej pracy: Progress 0 / 1249333 / 0.00 %, podglad G-kodu 1249328/1249333 (99%), podswietlona linia G-kodu magenta. Pasek stanu turkusowy z EDIT/READY/AUTO - zero pikseli w oknie barwy."
+    },
+    {
+      "id": "cameo1-auto-stoi-0-procent-194717",
+      "samplePath": "auto-stoi-0-procent-194717.png",
+      "ocrPath": "auto-stoi-0-procent-194717.ocr-pl.json",
+      "sourceRelativePath": "out/diagnoza/cameo1/klatki/20261011-194717-0399.png",
+      "sha256": "473EEF2311CF923E98A705ED13AEDC1F806EB002E659DF13844274A18FBA59DB",
+      "expectedScreen": "auto",
+      "expectedRed": false,
+      "maxRedFraction": 0.0,
+      "expectedProgressPercent": 0,
+      "expectedProgressText": "Progress: 0 / 1249333/ 0.00%",
+      "evidence": "Ta sama zakladka 35 minut pozniej (zmienia sie tylko zegar HMI) - stabilnosc przez caly przebieg."
+    }
+  ]
+}

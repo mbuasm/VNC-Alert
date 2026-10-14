@@ -1,0 +1,19 @@
+# Datagramy: datagramy.txt (Base64). Kolumny niżej: sha256-bajtów rozmiar nazwa porównanie-z-0.4.134 porównanie-z-0.4.249 (ten sam komunikat zbudowany kodem tamtej wersji).
+6036257e7a75499439e9fa1d1bb9fd0a6d242da763ab2b11498c774bd10b2e85 1080 01-heartbeat 0.4.134=identyczny 0.4.249=identyczny
+a0ef99d3212c4c7ff4466d392b873c36a70cbcaec675db4c587b0cc788957ff0 597 02-heartbeat-minimal 0.4.134=identyczny 0.4.249=identyczny
+9ea2bdc1e1eae7390caf59d6d484dbbeac74cc79f673d579037de1444f0e0b28 2269 03-state 0.4.134=identyczny 0.4.249=identyczny
+fbcba33ca4354ca34b7c27a603f4bcd17ad5354b2d64f71efbc59c4cade9953b 589 04-ack 0.4.134=identyczny 0.4.249=identyczny
+b311022b556ee286cd2aa86b15030622a296302f1d879f309dfea6182b789207 486 05-groupProbe 0.4.134=identyczny 0.4.249=identyczny
+e0f8ba1ffcdb00e21601ff513d70ade7952da62c59c48dd82cc1acb8ed80706b 503 06-groupProbe-reply 0.4.134=identyczny 0.4.249=identyczny
+828a84b7616001b59dacf9439f1540075b58a841bfd28d35acb823bc92f05e4b 585 07-instructionChange 0.4.134=identyczny 0.4.249=identyczny
+ca4a4219ed276df3d1ebfef06cbb6cd3c90b2f8a9afd28a6fec5ed978b26b4c2 495 08-instructionsRequest 0.4.134=identyczny 0.4.249=identyczny
+015650e4b2145eae7cef4a78b5bedc48ded1ca70851bbf606e4dab5d9cef1c1e 773 09-instructionsReply 0.4.134=identyczny 0.4.249=identyczny
+a67afacc25362b92f1ac9935df2fcfe97fd2ae91c813e1ae49b86079cb6212be 527 10-downtimeRequest-fullWindow 0.4.134=identyczny 0.4.249=identyczny
+f5eb51b775c206c329226192b6ca4e9ddfad660e7623ef6029f738af6a9d3a76 528 11-downtimeRequest-tail 0.4.134=identyczny 0.4.249=identyczny
+4145954854aa5d8bbd0f81fbd99054594b42fcb7c6fdc72d3ad68171d4b70722 1280 12-downtimeReply 0.4.134=identyczny 0.4.249=identyczny
+db3fd94d09a0e8ff4171d9b3d3bb53f3a3df901823620dc99ca8fae27181eb7d 1475 13-sharedConfig 0.4.134=identyczny 0.4.249=identyczny
+5070dc8b0a4cc5059a933df1526cd2e9403db97bca4cb5fcddf89fb76b1b228e 1542 13b-sharedConfig-machines.0.4.249 0.4.134=nie-zna-pola 0.4.249=zrodlo
+1777d70f66a903d996b19c26ca9eb1557fc93dd42dfaabcec376a7df40c5fea2 543 14-observationRequest 0.4.134=identyczny 0.4.249=identyczny
+be8cd86553480a92c32872c7bf44fa87cac508cc226db2e360717b31271dd616 799 15-observationReply-1 0.4.134=identyczny 0.4.249=identyczny
+544130ba8916137c19dbe9539fe8eaa54bed8e4640869b2bc8b353b341b3f781 799 15-observationReply-2 0.4.134=identyczny 0.4.249=identyczny
+81ddca79eedf457c6b20249042705a13b35f99b37e515707b32c475ea8390a44 800 15-observationReply-3 0.4.134=identyczny 0.4.249=identyczny
