@@ -45,7 +45,7 @@ Opis architektury: `docs\architektura.md`.
   (`msi-windows`, `testy.ps1`), `testy / skan-sekretow`. SDK z `global.json` instaluje workflow.
 - Rulesety na `main`: `main` (zakaz usuwania, zakaz non-fast-forward, zmiany tylko przez PR)
   i `testy` (wymagane trzy checki `testy / *`, strict - galaz aktualna wzgledem `main`).
-- `wydanie.yml`, job `sprawdz`: reusable `ui-sprawdz.yml`; uruchamia sie na PR (nie draft) i recznie.
+- `wydanie.yml`, job `sprawdz`: reusable `ui-testy.yml` uruchamia `testy-ui.ps1`; na PR (nie draft) i recznie.
   Runner z wejscia `runs_on` albo zmiennej repo `SPRAWDZ_RUNS_ON` (VM `ui-msi-1`, etykieta `ui-msi`;
   pusta = `windows-latest`). Odmowa kodem 77 dla innego repo i PR z forka. Buduje paczke
   (`scripts\Przygotuj-Wydanie.ps1`), uruchamia smoke startu, test instalatora i testy

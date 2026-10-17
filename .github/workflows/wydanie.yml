@@ -23,7 +23,7 @@ jobs:
     if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     permissions:
       contents: read
-    uses: mbuasm/serwer-laptop/.github/workflows/ui-sprawdz.yml@main
+    uses: mbuasm/serwer-laptop/.github/workflows/ui-testy.yml@main
     with:
       runs-on: ${{ inputs.runs_on || vars.SPRAWDZ_RUNS_ON || '"windows-latest"' }}
 
