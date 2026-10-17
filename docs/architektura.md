@@ -390,7 +390,9 @@ Workflow `ci.yml` (pull request, push na `main`, ręczne uruchomienie) wywołuje
 
 Workflow `wydanie.yml`:
 
-- job `sprawdz` wywołuje `ui-sprawdz.yml` (dla pull requestów poza szkicami i przy ręcznym uruchomieniu);
+- job `sprawdz` wywołuje `ui-testy.yml`, który uruchamia `testy-ui.ps1` (paczka, smoke startu, instalator,
+  test instalacji, testy `MaszynyAlert.Windows.Tests` z wynikiem trx) — dla pull requestów poza szkicami
+  i przy ręcznym uruchomieniu;
   runner wskazuje wejście `runs_on`, a gdy jest puste — zmienna `SPRAWDZ_RUNS_ON` albo `windows-latest`;
 - job `wydanie` (tylko ręczne uruchomienie na `refs/heads/main`, po `sprawdz`) wywołuje wspólny `wydanie.yml`
   z `projekt: maszyny-alert`, poleceniem budowania `scripts\Przygotuj-Wydanie.ps1` i instalatorem
